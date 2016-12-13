@@ -1,0 +1,77 @@
+﻿Imports ESRI.ArcGIS.Carto
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+
+Public Class EditStreet
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Tool
+    Dim cm As New Utilities
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnMouseUp(ByVal arg As ESRI.ArcGIS.Desktop.AddIns.Tool.MouseEventArgs)
+        MyBase.OnMouseUp(arg)
+        Try
+            'Get streetId for the clicked street segment
+            Dim myScreenPoint As IPoint = New Point
+            myScreenPoint.X = arg.X
+            myScreenPoint.Y = arg.Y
+            Dim myStreetId As Integer = cm.GetStreetID(myScreenPoint)
+
+            'If not found, exit
+            If myStreetId = -1 Then
+                Exit Sub
+            End If
+
+            'Create new form instance
+            Dim myFrm As New frmStreet()
+
+            'Select existing row from street table
+            Dim myUpdateCursor As ICursor = cm.PerformAttributeQuery("Street", "OBJECTID = " & myStreetId, "update")
+
+            'Move to first row of results
+            Dim myRow As IRow = myUpdateCursor.NextRow
+
+            'If no rows, exit
+            If myRow Is Nothing Then
+                Exit Sub
+            End If
+
+            'Set default values for form
+            myFrm.fldCBStreetType.SelectedValue = cm.GetRowValueAsString(myRow, "streetType")
+            myFrm.fldCBStreetStatus.SelectedValue = cm.GetRowValueAsString(myRow, "streetStatus")
+            myFrm.fldTBNameEnglish.Text = cm.GetRowValueAsString(myRow, "nameEnglish")
+            myFrm.fldTBNameArabic.Text = cm.GetRowValueAsString(myRow, "nameArabic")
+            myFrm.gvStreetSegmentList.Enabled = False
+
+            'Open form
+            myFrm.ShowDialog()
+
+            'If user clicks ok after editing form
+            If myFrm.DialogResult = Windows.Forms.DialogResult.OK Then
+                cm.SetRowValue(myRow, "streetType", myFrm.fldCBStreetType.SelectedValue)
+                cm.SetRowValue(myRow, "streetStatus", myFrm.fldCBStreetStatus.SelectedValue)
+                cm.SetRowValue(myRow, "nameEnglish", myFrm.fldTBNameEnglish.Text)
+                cm.SetRowValue(myRow, "nameArabic", myFrm.fldTBNameArabic.Text)
+                myUpdateCursor.UpdateRow(myRow)
+                myUpdateCursor.Flush()
+            End If
+            cm.Release(myUpdateCursor)
+            myFrm.Close()
+            cm.myDoc.ActiveView.Refresh()
+
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+
+    End Sub
+End Class

@@ -1,0 +1,66 @@
+﻿Imports npoAddressingAddIn.Utilities
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.Display
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+Imports ESRI.ArcGIS.Carto
+
+Public Class FlipStreet
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Tool
+    Dim cm As New Utilities
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnMouseUp(ByVal arg As ESRI.ArcGIS.Desktop.AddIns.Tool.MouseEventArgs)
+        MyBase.OnMouseUp(arg)
+
+        Try
+            Dim pQueryPoint As IPoint = cm.GetPointFromMouse(arg)
+            Dim pFeatureLayer As IFeatureLayer = cm.FindLayerByName("StreetSegment")
+            If pFeatureLayer Is Nothing Then
+                Exit Sub
+            End If
+            Dim pQueryPolygon As IPolygon
+            Dim pTopologicalOperator As ITopologicalOperator
+            pTopologicalOperator = pQueryPoint
+            pQueryPolygon = pTopologicalOperator.Buffer(cm.PixelsToMapUnits(5))
+            cm.myDoc.ActiveView.Refresh()
+
+            Dim pWorkspaceEdit As IWorkspaceEdit = cm.StartEditSession(pFeatureLayer)
+
+            Dim pFeatureCursor As IFeatureCursor = cm.PerformSpatialQuery(pFeatureLayer.FeatureClass, pQueryPolygon, esriSpatialRelEnum.esriSpatialRelIntersects, Nothing, "update")
+            If pFeatureCursor Is Nothing Then
+                cm.Debug("No feature cursor returned")
+                Exit Sub
+            End If
+
+            Dim i As Integer = 0
+            Dim pFeature As IFeature = pFeatureCursor.NextFeature
+            If pFeature Is Nothing Then
+                cm.Debug("No feature returned from search")
+                Exit Sub
+            End If
+
+            Do Until pFeature Is Nothing
+                pFeature.Shape = cm.ReversePolyline(pFeature.ShapeCopy)
+                pFeature.Store()
+                pFeature = pFeatureCursor.NextFeature()
+            Loop
+
+            cm.Release(pFeatureCursor)
+            cm.StopEditSession(pWorkspaceEdit)
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+    End Sub
+End Class

@@ -1,0 +1,33 @@
+﻿Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.esriSystem '
+Imports npoAddressingAddIn.Utilities
+
+Public Class ShowAddressUnitWindow
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Button
+    Dim cm As New Utilities
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnClick()
+        Try
+
+            Dim myDockWinID As UID = New UIDClass()
+            myDockWinID.Value = "NORPLAN_Oman_npoAddressingAddIn_DockableAddressUnitWindow"
+            Dim myDocWin = My.ArcMap.DockableWindowManager.GetDockableWindow(myDockWinID)
+
+            If myDocWin.IsVisible = True Then
+                myDocWin.Show(False)
+            Else
+                myDocWin.Show(True)
+            End If
+
+        Catch ex As Exception
+
+            MsgBox(ex.Message)
+
+        End Try
+
+    End Sub
+End Class

@@ -1,0 +1,7 @@
+ArcGIS Code Migration analyzer run on 08.07.2013 at 9:26 PM
+--------------------------------------------------------------
+Analyzing project: npoAddressingAddIn_v3
+
+-------------------------
+
+Finished analysis. Check the Warnings in the Visual Studio Error List window for migration issues. 0 migration issues found.

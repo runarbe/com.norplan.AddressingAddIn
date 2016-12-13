@@ -1,0 +1,77 @@
+﻿Imports npoAddressingAddIn.Utilities
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+Imports ESRI.ArcGIS.Carto
+Imports ESRI.ArcGIS.Display
+
+Public Class GetStreetLength
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Tool
+    Dim cm As New Utilities
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnUpdate()
+
+    End Sub
+    Protected Overrides Sub OnMouseUp(ByVal arg As ESRI.ArcGIS.Desktop.AddIns.Tool.MouseEventArgs)
+        MyBase.OnMouseUp(arg)
+        Try
+            Dim myScreenPoint As IPoint = New Point
+            myScreenPoint.X = arg.X
+            myScreenPoint.Y = arg.Y
+            cm.mDAUW.ResetSettings()
+
+            Dim myColor As IColor
+            myColor = New RgbColor
+            myColor.RGB = RGB(103, 255, 83)
+
+            Dim myStreetId As Integer = cm.GetStreetID(myScreenPoint)
+            If myStreetId > -1 Then
+                cm.mDAUW.SetStreetID(myStreetId.ToString)
+            End If
+            Dim mStreetLayer As IFeatureLayer = cm.FindLayerByName("StreetSegment")
+            Dim mFC As IFeatureClass = mStreetLayer.FeatureClass
+            Dim mFSelection As IFeatureSelection = mStreetLayer
+            mFSelection.Clear()
+            cm.myDoc.ActiveView.Refresh()
+            Dim mQueryFilter As New QueryFilter
+            Dim mSelectionSet As ISelectionSet
+            mQueryFilter.WhereClause = "streetID=" & myStreetId.ToString
+            mSelectionSet = mFC.Select(mQueryFilter, esriSelectionType.esriSelectionTypeIDSet, esriSelectionOption.esriSelectionOptionNormal, Nothing)
+            mFSelection.SetSelectionSymbol = True
+            mFSelection.SelectionColor = myColor
+            mFSelection.SelectionSet = mSelectionSet
+            cm.myDoc.ActiveView.PartialRefresh(esriViewDrawPhase.esriViewGeoSelection, Nothing, Nothing)
+
+            Dim myTable As ITable = mStreetLayer
+            If Not myTable Is Nothing Then
+                Dim myCursor As ICursor
+                myCursor = myTable.Search(mQueryFilter, False)
+                If Not myCursor Is Nothing Then
+                    Dim myField As Integer = myCursor.FindField("SHAPE_Length")
+                    Dim myValue As Decimal = 0
+                    Dim myRow As IRow = myCursor.NextRow
+                    Do Until myRow Is Nothing
+                        myValue += myRow.Value(myField)
+                        myRow = myCursor.NextRow
+                    Loop
+                    Marshal.ReleaseComObject(myCursor)
+                    MsgBox(myValue.ToString, MsgBoxStyle.Information, "Street Length")
+                End If
+            End If
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+    End Sub
+End Class

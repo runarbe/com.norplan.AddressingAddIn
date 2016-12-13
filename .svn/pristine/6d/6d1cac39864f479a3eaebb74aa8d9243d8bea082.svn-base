@@ -1,0 +1,102 @@
+﻿Imports System.Windows.Forms
+Imports npoAddressingAddIn.Utilities
+Imports ESRI.ArcGIS.Carto
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+
+Public Class frmStreet
+    Dim cm As New Utilities()
+    Dim pFeatureLayer As IFeatureLayer
+    Dim pFeatureSelection As IFeatureSelection
+    Dim pTable As ITable
+    Dim pRow As IRow
+    Dim pFieldValue1 As String
+    Dim pFieldValue2 As String
+    Dim pFieldValue3 As String
+    Dim dTotalLength As Double = 0
+    Dim pPolylines As New List(Of IPolyline)
+    Dim itemOption() As Object
+    Dim itemOptionsOld() As Object
+    Dim itemOptionsFinal() As Object
+    Dim pWorFact As IWorkspaceFactory
+    Dim pWor As IWorkspace
+    Dim pFeatWor As IFeatureWorkspace
+    Dim pWorEdit As IWorkspaceEdit
+    Dim pFC As IFeatureClass
+    Dim pFeatureBuffer As IFeatureBuffer
+    Dim pFeatureCursor As IFeatureCursor
+    Dim pFeature As IFeature
+    Dim pPolyline As IPolyline
+    Dim pt As IPoint
+    Dim pRowBuffer As IRowBuffer
+    Dim pCursor As ICursor
+    Dim itemOptions As New Utilities.myStreetSegments()
+
+    Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
+        'Return OK status from dialog
+        Me.DialogResult = System.Windows.Forms.DialogResult.OK
+        Me.Close()
+    End Sub
+
+    Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
+        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.Close()
+    End Sub
+
+    Private Sub communityId_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles fldCBArea.SelectedIndexChanged
+
+    End Sub
+
+
+    Public Sub New()
+
+        ' This call is required by the Windows Form Designer.
+        InitializeComponent()
+
+        'Fill options for street class
+        Dim mStreetClassList As New Utilities.myKeyValue()
+
+        For Each myVal As Integer In [Enum].GetValues(GetType(streetTypeEnumeration))
+            Dim myName As String = [Enum].GetName(GetType(streetTypeEnumeration), myVal)
+            mStreetClassList.addKeyValue(myName, myVal)
+        Next
+
+        Me.fldCBStreetType.DataSource = mStreetClassList.myTable
+        Me.fldCBStreetType.DisplayMember = "key"
+        Me.fldCBStreetType.ValueMember = "value"
+        Me.fldCBStreetType.Text = [Enum].GetName(GetType(streetTypeEnumeration), streetTypeEnumeration.LocalStreet)
+
+        'Fill options for street status
+        Dim mStreetStatusList As New Utilities.myKeyValue
+
+        For Each myVal As Integer In [Enum].GetValues(GetType(streetStatusEnumeration))
+            Dim myName As String = [Enum].GetName(GetType(streetStatusEnumeration), myVal)
+            mStreetStatusList.addKeyValue(myName, myVal)
+        Next
+
+        Me.fldCBStreetStatus.DataSource = mStreetStatusList.myTable
+        Me.fldCBStreetStatus.DisplayMember = "key"
+        Me.fldCBStreetStatus.ValueMember = "value"
+        Me.fldCBStreetStatus.Text = [Enum].GetName(GetType(streetStatusEnumeration), streetStatusEnumeration.Current)
+
+        'Me.fldCBArea.DataSource = 
+        'Me.fldCBArea.DisplayMember = "key"
+        'Me.fldCBArea.ValueMember = "value"
+        'Me.fldCBArea.Refresh()
+
+    End Sub
+
+    Private Sub frmStreet_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+
+    End Sub
+
+End Class

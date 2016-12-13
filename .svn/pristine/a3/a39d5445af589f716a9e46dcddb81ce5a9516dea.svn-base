@@ -1,0 +1,51 @@
+﻿Imports ESRI.ArcGIS.Geometry
+Imports npoAddressingAddIn.Utilities
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+Imports ESRI.ArcGIS.Carto
+
+Public Class DeleteAddressUnit
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Tool
+    Dim cm As New npoAddressingAddIn.Utilities
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnUpdate()
+
+    End Sub
+
+    Protected Overrides Sub OnMouseUp(ByVal pArg As ESRI.ArcGIS.Desktop.AddIns.Tool.MouseEventArgs)
+        MyBase.OnMouseUp(pArg)
+        Try
+
+            Dim mPoint As IPoint = cm.GetPointFromMouse(pArg)
+            Dim mAdrUnitID As Long = cm.GetAddressUnitID(mPoint)
+            Dim mCursor As IFeatureCursor
+            Dim mFeature As IFeature
+            Dim mLayer As IFeatureLayer = cm.FindLayerByName("AdrUnitNumber")
+            Dim mFeatureClass As IFeatureClass = mLayer.FeatureClass
+            mCursor = cm.PerformSpatialQuery(mLayer.FeatureClass, Nothing, esriSpatialRelEnum.esriSpatialRelUndefined, "OBJECTID=" & mAdrUnitID)
+            If Not mCursor Is Nothing Then
+                mFeature = mCursor.NextFeature
+                Do Until mFeature Is Nothing
+                    mFeature.Delete()
+                    mFeature = mCursor.NextFeature
+                Loop
+                cm.myDoc.ActiveView.Refresh()
+            End If
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+
+    End Sub
+End Class

@@ -1,0 +1,93 @@
+﻿Imports npoAddressingAddIn
+Imports ESRI.ArcGIS.Carto
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+
+Public Class SetDirection
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Tool
+    Dim cm As New Utilities
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnMouseUp(ByVal arg As ESRI.ArcGIS.Desktop.AddIns.Tool.MouseEventArgs)
+        MyBase.OnMouseUp(arg)
+        Try
+            Dim frm As New frmSetDirection
+            Dim pQueryPoint As IPoint = cm.GetPointFromMouse(arg)
+            Dim pFeatureLayer As IFeatureLayer = cm.FindLayerByName("StreetSegment")
+            If pFeatureLayer Is Nothing Then
+                Exit Sub
+            End If
+            Dim pQueryPolygon As IPolygon
+            Dim pTopologicalOperator As ITopologicalOperator
+            pTopologicalOperator = pQueryPoint
+            pQueryPolygon = pTopologicalOperator.Buffer(cm.PixelsToMapUnits(5))
+
+            Dim myDirection As String = Nothing
+
+            If arg.Shift = True Then
+                myDirection = "FT"
+            ElseIf arg.Control = True Then
+                myDirection = ""
+            Else
+                frm.ShowDialog()
+
+                If Not frm.DialogResult = Windows.Forms.DialogResult.OK Then
+                    Exit Sub
+                End If
+                If frm.rbBoth.Checked = True Then
+                    myDirection = ""
+                ElseIf frm.rbClosed.Checked = True Then
+                    myDirection = "N"
+                ElseIf frm.rbFT.Checked = True Then
+                    myDirection = "FT"
+                ElseIf frm.rbTF.Checked = True Then
+                    myDirection = "TF"
+                End If
+
+            End If
+
+            If myDirection Is Nothing Then
+                Exit Sub
+            End If
+
+            Dim pWorkspaceEdit As IWorkspaceEdit = cm.StartEditSession(pFeatureLayer)
+
+            Dim pFeatureCursor As IFeatureCursor = cm.PerformSpatialQuery(pFeatureLayer.FeatureClass, pQueryPolygon, esriSpatialRelEnum.esriSpatialRelIntersects, Nothing, "update")
+            If pFeatureCursor Is Nothing Then
+                cm.Debug("No feature cursor returned")
+                Exit Sub
+            End If
+
+            Dim pFeature As IFeature = pFeatureCursor.NextFeature
+            If pFeature Is Nothing Then
+                cm.Debug("No feature returned from search")
+                Exit Sub
+            End If
+
+            Do Until pFeature Is Nothing
+                cm.SetFeatureValue(pFeature, "directional", myDirection)
+                pFeature.Store()
+                pFeature = pFeatureCursor.NextFeature()
+            Loop
+
+            cm.Release(pFeatureCursor)
+            cm.StopEditSession(pWorkspaceEdit)
+            cm.myDoc.ActiveView.Refresh()
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+
+    End Sub
+End Class

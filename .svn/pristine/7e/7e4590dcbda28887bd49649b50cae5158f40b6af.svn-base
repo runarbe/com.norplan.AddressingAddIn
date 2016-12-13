@@ -1,0 +1,89 @@
+﻿Imports npoAddressingAddIn.Utilities
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+Imports ESRI.ArcGIS.Carto
+
+Public Class SelectStreet
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Tool
+
+    Dim cm As New Utilities
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnMouseUp(ByVal arg As ESRI.ArcGIS.Desktop.AddIns.Tool.MouseEventArgs)
+        MyBase.OnMouseUp(arg)
+
+
+        Dim pFeatureLayer As IFeatureLayer
+        Dim pFeatureClass As IFeatureClass
+        Dim pFeatureSelection As IFeatureSelection
+        Dim pPoint As IPoint
+        Dim pPolygon As IPolygon
+        Dim pFilter As ISpatialFilter
+        Dim geometryColumn As String
+        Dim pTopo As ITopologicalOperator
+        Dim pSelectionSet As ISelectionSet
+        Dim pSelectionSet2 As ISelectionSet = Nothing
+
+        Try
+            pFeatureLayer = cm.FindLayerByName("StreetSegment")
+
+            'If alt is pressed, start by clearing all presently selected street segments
+            If (arg.Alt = True) Then
+                pFeatureSelection = pFeatureLayer
+                pFeatureSelection.Clear()
+            End If
+
+            'Iterate through selection
+            If Not pFeatureLayer Is Nothing Then
+                My.ArcMap.Application.StatusBar.Message(0) = "Searching"
+                pFeatureClass = pFeatureLayer.FeatureClass
+                pFeatureSelection = pFeatureLayer
+
+                'Get the point the user clicked
+                pPoint = cm.myDoc.ActiveView.ScreenDisplay.DisplayTransformation.ToMapPoint(arg.X, arg.Y)
+                pTopo = pPoint
+
+                'Create a polygon from a 5px buffer around the clicked point
+                pPolygon = pTopo.Buffer(cm.PixelsToMapUnits(5))
+
+                'Create a spatial filter between the polygon and the geometry column of StreetSegments
+                pFilter = New SpatialFilter
+                geometryColumn = pFeatureClass.ShapeFieldName
+                With pFilter
+                    .Geometry = pPolygon
+                    .GeometryField = geometryColumn
+                    .SpatialRel = esriSpatialRelEnum.esriSpatialRelIntersects
+                End With
+
+                'Perform the select
+                pSelectionSet = pFeatureClass.Select(pFilter, esriSelectionType.esriSelectionTypeIDSet, esriSelectionOption.esriSelectionOptionNormal, Nothing)
+
+                'If shift is pressed, combine the new selection with the previous selection
+                If (arg.Shift = True) Then
+                    pSelectionSet.Combine(pFeatureSelection.SelectionSet, esriSetOperation.esriSetUnion, pSelectionSet2)
+                    pFeatureSelection.SelectionSet = pSelectionSet2
+                ElseIf (arg.Shift = False) Then 'if shift is not pressed, create new selection set
+                    pFeatureSelection.SelectionSet = pSelectionSet
+                End If
+            End If
+            'Refesh the view to display the selection
+
+            cm.myDoc.ActiveView.Refresh()
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
+
+    End Sub
+End Class

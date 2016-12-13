@@ -1,0 +1,153 @@
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+Partial Class frmCommunity
+    Inherits System.Windows.Forms.Form
+
+    'Form overrides dispose to clean up the component list.
+    <System.Diagnostics.DebuggerNonUserCode()> _
+    Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+        Try
+            If disposing AndAlso components IsNot Nothing Then
+                components.Dispose()
+            End If
+        Finally
+            MyBase.Dispose(disposing)
+        End Try
+    End Sub
+
+    'Required by the Windows Form Designer
+    Private components As System.ComponentModel.IContainer
+
+    'NOTE: The following procedure is required by the Windows Form Designer
+    'It can be modified using the Windows Form Designer.  
+    'Do not modify it using the code editor.
+    <System.Diagnostics.DebuggerStepThrough()> _
+    Private Sub InitializeComponent()
+        Me.cbDistrictNameEnglish = New System.Windows.Forms.ComboBox
+        Me.tbCommunityNumber = New System.Windows.Forms.TextBox
+        Me.Label1 = New System.Windows.Forms.Label
+        Me.Label2 = New System.Windows.Forms.Label
+        Me.cbAssignedTheme = New System.Windows.Forms.ComboBox
+        Me.Label3 = New System.Windows.Forms.Label
+        Me.btnCancel = New System.Windows.Forms.Button
+        Me.btnOK = New System.Windows.Forms.Button
+        Me.cbDistrictNameArabic = New System.Windows.Forms.ComboBox
+        Me.Label4 = New System.Windows.Forms.Label
+        Me.SuspendLayout()
+        '
+        'cbDistrictNameEnglish
+        '
+        Me.cbDistrictNameEnglish.FormattingEnabled = True
+        Me.cbDistrictNameEnglish.Location = New System.Drawing.Point(131, 16)
+        Me.cbDistrictNameEnglish.Name = "cbDistrictNameEnglish"
+        Me.cbDistrictNameEnglish.Size = New System.Drawing.Size(136, 21)
+        Me.cbDistrictNameEnglish.TabIndex = 0
+        '
+        'tbCommunityNumber
+        '
+        Me.tbCommunityNumber.Location = New System.Drawing.Point(131, 70)
+        Me.tbCommunityNumber.Name = "tbCommunityNumber"
+        Me.tbCommunityNumber.Size = New System.Drawing.Size(136, 20)
+        Me.tbCommunityNumber.TabIndex = 1
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(13, 73)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(96, 13)
+        Me.Label1.TabIndex = 2
+        Me.Label1.Text = "Community number"
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(13, 19)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(111, 13)
+        Me.Label2.TabIndex = 3
+        Me.Label2.Text = "District name (English)"
+        '
+        'cbAssignedTheme
+        '
+        Me.cbAssignedTheme.FormattingEnabled = True
+        Me.cbAssignedTheme.Location = New System.Drawing.Point(131, 96)
+        Me.cbAssignedTheme.Name = "cbAssignedTheme"
+        Me.cbAssignedTheme.Size = New System.Drawing.Size(136, 21)
+        Me.cbAssignedTheme.TabIndex = 4
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(13, 99)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(82, 13)
+        Me.Label3.TabIndex = 5
+        Me.Label3.Text = "Assigned theme"
+        '
+        'btnCancel
+        '
+        Me.btnCancel.Location = New System.Drawing.Point(111, 123)
+        Me.btnCancel.Name = "btnCancel"
+        Me.btnCancel.Size = New System.Drawing.Size(75, 23)
+        Me.btnCancel.TabIndex = 6
+        Me.btnCancel.Text = "Cancel"
+        Me.btnCancel.UseVisualStyleBackColor = True
+        '
+        'btnOK
+        '
+        Me.btnOK.Location = New System.Drawing.Point(192, 123)
+        Me.btnOK.Name = "btnOK"
+        Me.btnOK.Size = New System.Drawing.Size(75, 23)
+        Me.btnOK.TabIndex = 7
+        Me.btnOK.Text = "OK"
+        Me.btnOK.UseVisualStyleBackColor = True
+        '
+        'cbDistrictNameArabic
+        '
+        Me.cbDistrictNameArabic.FormattingEnabled = True
+        Me.cbDistrictNameArabic.Location = New System.Drawing.Point(131, 43)
+        Me.cbDistrictNameArabic.Name = "cbDistrictNameArabic"
+        Me.cbDistrictNameArabic.Size = New System.Drawing.Size(136, 21)
+        Me.cbDistrictNameArabic.TabIndex = 8
+        '
+        'Label4
+        '
+        Me.Label4.AutoSize = True
+        Me.Label4.Location = New System.Drawing.Point(13, 46)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(107, 13)
+        Me.Label4.TabIndex = 9
+        Me.Label4.Text = "District name (Arabic)"
+        '
+        'frmCommunity
+        '
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.ClientSize = New System.Drawing.Size(277, 154)
+        Me.Controls.Add(Me.Label4)
+        Me.Controls.Add(Me.cbDistrictNameArabic)
+        Me.Controls.Add(Me.btnCancel)
+        Me.Controls.Add(Me.btnOK)
+        Me.Controls.Add(Me.Label3)
+        Me.Controls.Add(Me.cbAssignedTheme)
+        Me.Controls.Add(Me.Label2)
+        Me.Controls.Add(Me.Label1)
+        Me.Controls.Add(Me.tbCommunityNumber)
+        Me.Controls.Add(Me.cbDistrictNameEnglish)
+        Me.Name = "frmCommunity"
+        Me.Text = "Community"
+        Me.ResumeLayout(False)
+        Me.PerformLayout()
+
+    End Sub
+    Friend WithEvents cbDistrictNameEnglish As System.Windows.Forms.ComboBox
+    Friend WithEvents tbCommunityNumber As System.Windows.Forms.TextBox
+    Friend WithEvents Label1 As System.Windows.Forms.Label
+    Friend WithEvents Label2 As System.Windows.Forms.Label
+    Friend WithEvents cbAssignedTheme As System.Windows.Forms.ComboBox
+    Friend WithEvents Label3 As System.Windows.Forms.Label
+    Friend WithEvents btnCancel As System.Windows.Forms.Button
+    Friend WithEvents btnOK As System.Windows.Forms.Button
+    Friend WithEvents cbDistrictNameArabic As System.Windows.Forms.ComboBox
+    Friend WithEvents Label4 As System.Windows.Forms.Label
+End Class

@@ -1,0 +1,12 @@
+﻿Public Class AboutTheAddIn
+  Inherits ESRI.ArcGIS.Desktop.AddIns.Button
+
+  Public Sub New()
+
+  End Sub
+
+    Protected Overrides Sub OnClick()
+        Dim frm As New frmAboutBox
+        frm.ShowDialog()
+    End Sub
+End Class

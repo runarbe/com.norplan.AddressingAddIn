@@ -1,0 +1,53 @@
+﻿Imports ESRI.ArcGIS.Carto
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+
+Public Class AddToStreet
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Button
+    Dim cm As New Utilities
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnClick()
+        Try
+            Dim frm As New frmInputStreetId()
+            Dim pPolylines As New List(Of IPolyline)
+            Dim itemOption As New Utilities.myStreetSegments()
+            Dim pFeatureBuffer As IFeatureBuffer = Nothing
+            Dim pFeatureCursor As IFeatureCursor = Nothing
+            Dim AddressCollection As New Collection
+
+            frm.ShowDialog()
+
+            If Not frm.DialogResult = Windows.Forms.DialogResult.OK Then
+                Exit Sub
+            End If
+
+            If IsNumeric(frm.fldStreetId.Text) Then
+                Dim myUpdateValue As Integer = CInt(frm.fldStreetId.Text)
+                cm.UpdateSingleFieldQuery("StreetSegment", "streetID", myUpdateValue, Nothing, True)
+            End If
+
+            cm.myDoc.ActiveView.Refresh()
+
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+
+    End Sub
+
+    Protected Overrides Sub OnUpdate()
+
+    End Sub
+End Class

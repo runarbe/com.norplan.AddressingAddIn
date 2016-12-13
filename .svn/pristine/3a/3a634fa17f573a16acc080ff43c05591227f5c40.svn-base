@@ -1,0 +1,143 @@
+﻿Imports npoAddressingAddIn.Utilities
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+Imports ESRI.ArcGIS.Carto
+
+Public Class TestButton
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Button
+    Dim cm As New Utilities
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnClick()
+        Dim mLatinSourceField = "RoadName_E"
+        Dim mArabicSourceField = "RoadName_A"
+        Dim mSegmentLayer As IFeatureLayer
+        Dim mSegmentFeatureClass As IFeatureClass
+        Dim mPoint As IPoint = New Point
+        Dim mSourceFilter As ISpatialFilter
+        Dim mGeometryColumn As String
+        Dim mTopologicalOperator As ITopologicalOperator
+        Dim mSegmentSelectionSet As ISelectionSet
+        Dim mSegmentSelectionSet2 As ISelectionSet2 = Nothing
+        Dim mWorkspaceEdit As IWorkspaceEdit
+        Dim mSegmentCursor As IFeatureCursor = Nothing
+        Dim mSegment As IFeature
+        Dim mSegmentPolyline As IPolyline
+        Try
+
+            'Get street segment layer
+            mSegmentLayer = cm.FindLayerByName("StreetSegment")
+
+
+            'Iterate through selection
+            If Not mSegmentLayer Is Nothing Then
+
+
+                'Start an editing session
+                mWorkspaceEdit = cm.StartEditSession(mSegmentLayer)
+
+                My.ArcMap.Application.StatusBar.Message(0) = "Searching"
+                mSegmentFeatureClass = mSegmentLayer.FeatureClass
+
+                'Get the current selection
+                Dim mSegmentFeatureSelection As IFeatureSelection = mSegmentLayer
+
+                'Perform the select
+                mSegmentSelectionSet = mSegmentFeatureSelection.SelectionSet
+
+                'Get a handle on the selection
+                mSegmentSelectionSet2 = CType(mSegmentSelectionSet, ISelectionSet2)
+
+                'Create a cursor
+                mSegmentSelectionSet2.Update(Nothing, True, mSegmentCursor)
+
+                'For each selected road
+                mSegment = mSegmentCursor.NextFeature
+
+                Do Until mSegment Is Nothing
+                    mSegmentPolyline = mSegment.Shape
+                    mSegmentPolyline.QueryPoint(ESRI.ArcGIS.Geometry.esriSegmentExtension.esriNoExtension, 0.5, True, mPoint)
+                    cm.DrawGraphicPoint(mPoint, 5)
+
+                    'For each segment, select underlying source feature
+                    Dim mSourceFeatureLayer As IFeatureLayer
+                    Dim mSourceCursor As IFeatureCursor = Nothing
+                    Dim mSource As IFeature
+                    Dim mSourceSelectionSet As ISelectionSet
+                    Dim mSourcePolygon As IPolygon
+                    Dim mSourceFeatureClass As IFeatureClass
+
+                    'Get the source layer
+                    mSourceFeatureLayer = cm.FindLayerByName("roadscent2011")
+                    mSourceFeatureClass = mSourceFeatureLayer.FeatureClass
+
+                    'Buffer the mid-point
+                    mTopologicalOperator = mPoint 'Recycle topological operator
+                    mSourcePolygon = mTopologicalOperator.Buffer(1)
+
+                    'Create a spatial filter between the polygon and the geometry column of StreetSegments
+                    mSourceFilter = New SpatialFilter
+                    mGeometryColumn = mSourceFeatureClass.ShapeFieldName
+                    With mSourceFilter
+                        .Geometry = mSourcePolygon
+                        .GeometryField = mGeometryColumn
+                        .SpatialRel = esriSpatialRelEnum.esriSpatialRelIntersects
+                    End With
+
+                    'Select the underlying road
+                    mSourceSelectionSet = mSourceFeatureClass.Select(mSourceFilter, esriSelectionType.esriSelectionTypeIDSet, esriSelectionOption.esriSelectionOptionNormal, mWorkspaceEdit)
+
+                    'Create a retrieve cursor
+                    mSourceSelectionSet.Search(Nothing, True, mSourceCursor)
+
+                    'Grab the first matching feature from the source layer
+                    mSource = mSourceCursor.NextFeature
+
+                    If Not mSource Is Nothing Then
+                        Dim mLatinStreetName As String = cm.GetFeatureValue(mSource, mLatinSourceField)
+                        Dim mArabicSteetName As String = cm.GetFeatureValue(mSource, mArabicSourceField)
+
+                        'Find the corresponding street id
+                        Dim mStreetCursor As ICursor = cm.PerformAttributeQuery("Street", "nameEnglish='" & cm.SqlEscape(mLatinStreetName) & "'", "search")
+                        Dim mStreetRow As IRow = mStreetCursor.NextRow 'Take the first hit
+                        If Not mStreetRow Is Nothing Then
+                            cm.SetFeatureValue(mSegment, "streetID", cm.GetRowValue(mStreetRow, "OBJECTID"))
+                            mSegmentCursor.UpdateFeature(mSegment)
+                        End If
+                        cm.Release(mStreetCursor)
+                    End If
+                    cm.Release(mSourceCursor)
+
+                    mSegment = mSegmentCursor.NextFeature
+                Loop 'Next street segment
+
+                cm.Release(mSegmentCursor)
+                cm.StopEditSession(mWorkspaceEdit)
+
+                'Refesh the view to display the selection
+                cm.myDoc.ActiveView.Refresh()
+
+            End If 'If layer exists
+
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+
+    End Sub
+
+    Protected Overrides Sub OnUpdate()
+
+    End Sub
+End Class

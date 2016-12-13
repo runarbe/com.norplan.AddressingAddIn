@@ -1,0 +1,179 @@
+﻿''' <summary>
+''' Designer class of the dockable window add-in. It contains user interfaces that
+''' make up the dockable window.
+''' </summary>
+Public Class DockableAddressUnitWindow
+
+    Public mCurrentAddressUnitNumber As Long = 1
+    Public mCurrentSubDivisionLetter As Integer = 1
+
+    Public mCharacters As String() = New String() {"", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
+
+    Public Function GetCharacterNumber(ByVal pCharacter As String) As Integer
+        For i As Integer = 0 To 26 Step 1
+            If pCharacter = mCharacters(i) Then
+                Return i
+            End If
+        Next
+        Return -1
+    End Function
+
+    Public Sub IncrementAddressUnitNumber()
+        mCurrentAddressUnitNumber = mCurrentAddressUnitNumber + 1
+        mCurrentSubDivisionLetter = 0
+        UpdateAddressUnitNumber()
+    End Sub
+
+    Public Sub DecrementAddressUnitNumber()
+        mCurrentAddressUnitNumber = mCurrentAddressUnitNumber - 1
+        mCurrentSubDivisionLetter = 0
+        UpdateAddressUnitNumber()
+    End Sub
+
+    Public Sub ResetSettings()
+        mCurrentAddressUnitNumber = 1
+        mCurrentSubDivisionLetter = 0
+        tbSelectedStreet.Text = ""
+        UpdateAddressUnitNumber()
+    End Sub
+
+    Public Sub IncrementSubdivisionLetter()
+        mCurrentSubDivisionLetter = mCurrentSubDivisionLetter + 1
+        If mCurrentSubDivisionLetter > 26 Then
+            MsgBox("There are no more letters for subdivision")
+            mCurrentSubDivisionLetter = 26
+        Else
+            UpdateAddressUnitNumber()
+        End If
+    End Sub
+
+    Public Sub UpdateAddressUnitNumber()
+        tbCurrentAdrUnitNumber.Text = mCurrentAddressUnitNumber & mCharacters(mCurrentSubDivisionLetter)
+    End Sub
+
+    Public Sub SetAddressNumber(ByVal pAdrNumber, Optional ByVal pSubDivLetter = 0)
+        mCurrentAddressUnitNumber = pAdrNumber
+        mCurrentSubDivisionLetter = pSubDivLetter
+        UpdateAddressUnitNumber()
+    End Sub
+
+    Public Function GetAddressNumber() As String
+        Return mCurrentAddressUnitNumber.ToString & mCharacters(mCurrentSubDivisionLetter).ToString
+    End Function
+
+    Public Sub SetStreetID(ByVal pStreetID As String)
+        tbSelectedStreet.Text = pStreetID
+    End Sub
+
+    Public Function GetAddressUnitType() As Integer
+        Return CType(cmbAddressUnitType.SelectedValue, npoAddressingAddIn.Utilities.addressUnitType)
+    End Function
+
+    Public Function GetAddressUnitStatus() As Integer
+        Return CType(cmbAddressUnitStatus.SelectedValue, npoAddressingAddIn.Utilities.addressUnitStatus)
+    End Function
+
+    Public Function GetAddressUnitResolution() As Integer
+        Return CType(cmbAddressUnitResolution.SelectedValue, npoAddressingAddIn.Utilities.addressUnitResolution)
+    End Function
+
+    Public Function GetStreetID() As Integer
+        If IsNumeric(tbSelectedStreet.Text) Then
+            Return tbSelectedStreet.Text
+        Else
+            Return Nothing
+        End If
+    End Function
+
+
+    Public Sub New(ByVal hook As Object)
+
+        ' This call is required by the Windows Form Designer.
+        InitializeComponent()
+
+        ' Add any initialization after the InitializeComponent() call.
+        Me.Hook = hook
+    End Sub
+
+
+    Private m_hook As Object
+    ''' <summary>
+    ''' Host object of the dockable window
+    ''' </summary> 
+    Public Property Hook() As Object
+        Get
+            Return m_hook
+        End Get
+        Set(ByVal value As Object)
+            m_hook = value
+        End Set
+    End Property
+
+    ''' <summary>
+    ''' Implementation class of the dockable window add-in. It is responsible for
+    ''' creating and disposing the user interface class for the dockable window.
+    ''' </summary>
+    Public Class AddinImpl
+        Inherits ESRI.ArcGIS.Desktop.AddIns.DockableWindow
+
+        Private m_windowUI As DockableAddressUnitWindow
+
+        Friend ReadOnly Property UI() As DockableAddressUnitWindow
+            Get
+                Return m_windowUI
+            End Get
+        End Property
+
+        Protected Overrides Function OnCreateChild() As System.IntPtr
+            m_windowUI = New DockableAddressUnitWindow(Me.Hook)
+            Return m_windowUI.Handle
+        End Function
+
+        Protected Overrides Sub Dispose(ByVal Param As Boolean)
+            If m_windowUI IsNot Nothing Then
+                m_windowUI.Dispose(Param)
+            End If
+
+            MyBase.Dispose(Param)
+        End Sub
+
+    End Class
+
+    Private Sub ComboBox3_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
+
+    End Sub
+
+    Private Sub cmbAddressUnitResolution_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
+
+    End Sub
+
+    Private Sub DockableAddressUnitWindow_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+
+        cmbAddressUnitType.DataSource = System.Enum.GetValues(GetType(npoAddressingAddIn.Utilities.addressUnitType))
+
+        cmbAddressUnitStatus.DataSource = System.Enum.GetValues(GetType(npoAddressingAddIn.Utilities.addressUnitStatus))
+
+        cmbAddressUnitResolution.DataSource = System.Enum.GetValues(GetType(npoAddressingAddIn.Utilities.addressUnitResolution))
+        cmbAddressUnitResolution.Text = "_20m"
+    End Sub
+
+    Private Sub tbCurrentAdrUnitNumber_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles tbCurrentAdrUnitNumber.TextChanged
+        Try
+            If IsNumeric(tbCurrentAdrUnitNumber.Text) Then
+                Me.SetAddressNumber(Me.tbCurrentAdrUnitNumber.Text)
+            Else
+                Dim i As Long = 0
+                Long.TryParse(tbCurrentAdrUnitNumber.Text.Substring(0, tbCurrentAdrUnitNumber.Text.Length - 1), i)
+                Dim j As Long = 0
+                j = Me.GetCharacterNumber(tbCurrentAdrUnitNumber.Text.Substring(tbCurrentAdrUnitNumber.Text.Length - 1))
+                Me.SetAddressNumber(i, j)
+            End If
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
+    End Sub
+
+    Private Sub cmbAddressUnitResolution_SelectedIndexChanged_1(sender As System.Object, e As System.EventArgs) Handles cmbAddressUnitResolution.SelectedIndexChanged
+
+    End Sub
+End Class

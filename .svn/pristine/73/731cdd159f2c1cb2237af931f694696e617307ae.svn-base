@@ -1,0 +1,57 @@
+﻿Public Class frmSelectStreetName
+    Dim cm As New Utilities()
+
+
+    Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+    End Sub
+
+    Sub updateThemeID()
+        Me.cbThemeID.DataSource = cm.GetComboValues("Themes", "ID", "themeNameEnglish")
+        Me.cbThemeID.DisplayMember = "key"
+        Me.cbThemeID.ValueMember = "value"
+        Me.cbThemeID.Refresh()
+        updateNameID()
+    End Sub
+
+    Private Sub btnCancel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnCancel.Click
+        Me.DialogResult = Windows.Forms.DialogResult.Cancel
+        Hide()
+    End Sub
+
+    Private Sub btnOK_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnOK.Click
+        Me.DialogResult = Windows.Forms.DialogResult.OK
+        Hide()
+    End Sub
+
+    Private Sub themeID_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cbThemeID.SelectedIndexChanged
+        updateNameID()
+    End Sub
+
+    Sub updateNameID()
+        If IsNumeric(Me.cbThemeID.SelectedValue) Then
+            Dim myQuery As String = "themeID=" & Me.cbThemeID.SelectedValue.ToString & " AND isUsed = 0"
+            Me.cbNameID.DataSource = cm.GetComboValuesQuery("Names", "ID", "streetNameEnglish", myQuery)
+            Me.cbNameID.DisplayMember = "key"
+            Me.cbNameID.ValueMember = "value"
+            Me.cbNameID.Refresh()
+        End If
+    End Sub
+
+    Private Sub nameID_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cbNameID.SelectedIndexChanged
+
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
+    End Sub
+
+    Public Sub New()
+
+        ' This call is required by the Windows Form Designer.
+        InitializeComponent()
+
+        ' Add any initialization after the InitializeComponent() call.
+        updateThemeID()
+
+    End Sub
+End Class

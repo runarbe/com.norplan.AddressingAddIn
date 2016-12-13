@@ -1,0 +1,67 @@
+﻿Public Class frmAddressUnitSettings
+
+    Private Sub RadioButton1_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbLeft.CheckedChanged
+
+    End Sub
+
+    Private Sub autoAddressSettings_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+
+    End Sub
+
+    Private Sub Label2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label2.Click
+
+    End Sub
+
+    Private Sub RadioButton3_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbBoth.CheckedChanged
+
+    End Sub
+
+    Private Sub GroupBox1_Enter(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbWhichSide.Enter
+
+    End Sub
+
+    Private Sub Button2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnCancel.Click
+        Me.DialogResult = Windows.Forms.DialogResult.Cancel
+        Me.Close()
+    End Sub
+
+    Private Sub Label3_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label3.Click
+
+    End Sub
+
+    Private Sub btnOK_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnOK.Click
+        Me.DialogResult = Windows.Forms.DialogResult.OK
+        Me.Close()
+    End Sub
+
+    Public Sub New()
+
+        ' This call is required by the Windows Form Designer.
+        InitializeComponent()
+
+        ' Add any initialization after the InitializeComponent() call.
+        Dim myAddressUnitTypes As New DataTable
+        myAddressUnitTypes.Columns.Add("key")
+        myAddressUnitTypes.Columns.Add("value")
+
+        Dim myRow As DataRow
+        myRow = myAddressUnitTypes.NewRow
+        myRow("value") = 1
+        myRow("key") = "Regular"
+        myAddressUnitTypes.Rows.Add(myRow)
+        myRow = myAddressUnitTypes.NewRow
+        myRow("value") = 2
+        myRow("key") = "Gate"
+        myAddressUnitTypes.Rows.Add(myRow)
+        myRow = myAddressUnitTypes.NewRow
+        myRow("value") = 3
+        myRow("key") = "Farm"
+        myAddressUnitTypes.Rows.Add(myRow)
+
+        Me.cbAddressUnitType.DataSource = myAddressUnitTypes
+        Me.cbAddressUnitType.ValueMember = "value"
+        Me.cbAddressUnitType.DisplayMember = "key"
+        Me.cbAddressUnitType.Refresh()
+
+    End Sub
+End Class

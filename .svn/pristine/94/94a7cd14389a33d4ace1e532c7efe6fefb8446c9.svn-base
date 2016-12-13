@@ -1,0 +1,62 @@
+﻿Imports npoAddressingAddIn.Utilities
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+Imports ESRI.ArcGIS.Carto
+Imports ESRI.ArcGIS.Display
+
+Public Class SetStreetForAddressing
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Tool
+    Dim cm As New Utilities
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnUpdate()
+
+    End Sub
+    Protected Overrides Sub OnMouseUp(ByVal arg As ESRI.ArcGIS.Desktop.AddIns.Tool.MouseEventArgs)
+        MyBase.OnMouseUp(arg)
+        Try
+            Dim myScreenPoint As IPoint = New Point
+            myScreenPoint.X = arg.X
+            myScreenPoint.Y = arg.Y
+
+            Dim myColor As IColor
+            myColor = New RgbColor
+            myColor.RGB = RGB(96, 255, 233)
+
+            cm.mDAUW.ResetSettings()
+
+            Dim myStreetId As Integer = cm.GetStreetID(myScreenPoint)
+            If myStreetId > -1 Then
+                cm.mDAUW.SetStreetID(myStreetId.ToString)
+            End If
+
+            Dim mStreetLayer As IFeatureLayer = cm.FindLayerByName("StreetSegment")
+            Dim mFC As IFeatureClass = mStreetLayer.FeatureClass
+            Dim mFSelection As IFeatureSelection = mStreetLayer
+            mFSelection.Clear()
+            cm.myDoc.ActiveView.Refresh()
+            Dim mQueryFilter As New QueryFilter
+            Dim mSelectionSet As ISelectionSet
+            mQueryFilter.WhereClause = "streetID=" & myStreetId.ToString
+            mSelectionSet = mFC.Select(mQueryFilter, esriSelectionType.esriSelectionTypeIDSet, esriSelectionOption.esriSelectionOptionNormal, Nothing)
+            mFSelection.SetSelectionSymbol = True
+            mFSelection.SelectionColor = myColor
+            mFSelection.SelectionSet = mSelectionSet
+            cm.myDoc.ActiveView.PartialRefresh(esriViewDrawPhase.esriViewGeoSelection, Nothing, Nothing)
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+    End Sub
+End Class

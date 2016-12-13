@@ -1,0 +1,130 @@
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+Partial Class frmSetDirection
+    Inherits System.Windows.Forms.Form
+
+    'Form overrides dispose to clean up the component list.
+    <System.Diagnostics.DebuggerNonUserCode()> _
+    Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+        Try
+            If disposing AndAlso components IsNot Nothing Then
+                components.Dispose()
+            End If
+        Finally
+            MyBase.Dispose(disposing)
+        End Try
+    End Sub
+
+    'Required by the Windows Form Designer
+    Private components As System.ComponentModel.IContainer
+
+    'NOTE: The following procedure is required by the Windows Form Designer
+    'It can be modified using the Windows Form Designer.  
+    'Do not modify it using the code editor.
+    <System.Diagnostics.DebuggerStepThrough()> _
+    Private Sub InitializeComponent()
+        Me.btnCancel = New System.Windows.Forms.Button
+        Me.btnOK = New System.Windows.Forms.Button
+        Me.rbFT = New System.Windows.Forms.RadioButton
+        Me.rbTF = New System.Windows.Forms.RadioButton
+        Me.rbClosed = New System.Windows.Forms.RadioButton
+        Me.rbBoth = New System.Windows.Forms.RadioButton
+        Me.gbStreetDirection = New System.Windows.Forms.GroupBox
+        Me.gbStreetDirection.SuspendLayout()
+        Me.SuspendLayout()
+        '
+        'btnCancel
+        '
+        Me.btnCancel.Location = New System.Drawing.Point(56, 141)
+        Me.btnCancel.Name = "btnCancel"
+        Me.btnCancel.Size = New System.Drawing.Size(75, 23)
+        Me.btnCancel.TabIndex = 5
+        Me.btnCancel.Text = "Cancel"
+        Me.btnCancel.UseVisualStyleBackColor = True
+        '
+        'btnOK
+        '
+        Me.btnOK.Location = New System.Drawing.Point(137, 141)
+        Me.btnOK.Name = "btnOK"
+        Me.btnOK.Size = New System.Drawing.Size(75, 23)
+        Me.btnOK.TabIndex = 6
+        Me.btnOK.Text = "OK"
+        Me.btnOK.UseVisualStyleBackColor = True
+        '
+        'rbFT
+        '
+        Me.rbFT.AutoSize = True
+        Me.rbFT.Checked = True
+        Me.rbFT.Location = New System.Drawing.Point(15, 19)
+        Me.rbFT.Name = "rbFT"
+        Me.rbFT.Size = New System.Drawing.Size(123, 17)
+        Me.rbFT.TabIndex = 1
+        Me.rbFT.TabStop = True
+        Me.rbFT.Text = "Oneway Start-to-End"
+        Me.rbFT.UseVisualStyleBackColor = True
+        '
+        'rbTF
+        '
+        Me.rbTF.AutoSize = True
+        Me.rbTF.Location = New System.Drawing.Point(15, 42)
+        Me.rbTF.Name = "rbTF"
+        Me.rbTF.Size = New System.Drawing.Size(123, 17)
+        Me.rbTF.TabIndex = 2
+        Me.rbTF.Text = "Oneway End-to-Start"
+        Me.rbTF.UseVisualStyleBackColor = True
+        '
+        'rbClosed
+        '
+        Me.rbClosed.AutoSize = True
+        Me.rbClosed.Location = New System.Drawing.Point(15, 66)
+        Me.rbClosed.Name = "rbClosed"
+        Me.rbClosed.Size = New System.Drawing.Size(57, 17)
+        Me.rbClosed.TabIndex = 3
+        Me.rbClosed.Text = "Closed"
+        Me.rbClosed.UseVisualStyleBackColor = True
+        '
+        'rbBoth
+        '
+        Me.rbBoth.AutoSize = True
+        Me.rbBoth.Location = New System.Drawing.Point(15, 90)
+        Me.rbBoth.Name = "rbBoth"
+        Me.rbBoth.Size = New System.Drawing.Size(82, 17)
+        Me.rbBoth.TabIndex = 4
+        Me.rbBoth.Text = "Bidirectional"
+        Me.rbBoth.UseVisualStyleBackColor = True
+        '
+        'gbStreetDirection
+        '
+        Me.gbStreetDirection.Controls.Add(Me.rbBoth)
+        Me.gbStreetDirection.Controls.Add(Me.rbClosed)
+        Me.gbStreetDirection.Controls.Add(Me.rbFT)
+        Me.gbStreetDirection.Controls.Add(Me.rbTF)
+        Me.gbStreetDirection.Location = New System.Drawing.Point(12, 12)
+        Me.gbStreetDirection.Name = "gbStreetDirection"
+        Me.gbStreetDirection.Size = New System.Drawing.Size(200, 123)
+        Me.gbStreetDirection.TabIndex = 0
+        Me.gbStreetDirection.TabStop = False
+        Me.gbStreetDirection.Text = "Street Direction"
+        '
+        'frmSetDirection
+        '
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.ClientSize = New System.Drawing.Size(227, 177)
+        Me.Controls.Add(Me.btnOK)
+        Me.Controls.Add(Me.btnCancel)
+        Me.Controls.Add(Me.gbStreetDirection)
+        Me.Name = "frmSetDirection"
+        Me.Text = "Set street direction"
+        Me.gbStreetDirection.ResumeLayout(False)
+        Me.gbStreetDirection.PerformLayout()
+        Me.ResumeLayout(False)
+
+    End Sub
+    Friend WithEvents btnCancel As System.Windows.Forms.Button
+    Friend WithEvents btnOK As System.Windows.Forms.Button
+    Friend WithEvents rbFT As System.Windows.Forms.RadioButton
+    Friend WithEvents rbTF As System.Windows.Forms.RadioButton
+    Friend WithEvents rbClosed As System.Windows.Forms.RadioButton
+    Friend WithEvents rbBoth As System.Windows.Forms.RadioButton
+    Friend WithEvents gbStreetDirection As System.Windows.Forms.GroupBox
+End Class

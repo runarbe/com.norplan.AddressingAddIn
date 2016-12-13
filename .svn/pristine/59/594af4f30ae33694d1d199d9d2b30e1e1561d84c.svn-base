@@ -1,0 +1,116 @@
+﻿Imports npoAddressingAddIn.Utilities
+Imports System.Windows.Forms
+Imports ESRI.ArcGIS.Carto
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+
+Public Class DefineStreet
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Button
+
+    Dim cm As npoAddressingAddIn.Utilities = New npoAddressingAddIn.Utilities()
+    Dim mStreetSegments As New myStreetSegments()
+    Dim frm As New frmStreet()
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnClick()
+
+        My.ArcMap.Application.CurrentTool = Nothing
+        Try
+            Dim mFeatureLayer As IFeatureLayer
+            Dim mFeatureSelection As IFeatureSelection
+            Dim mTable As ITable
+            Dim mCSegmentId As String
+            Dim mCSource As String
+            Dim mCStreetId As String
+            Dim mTotalLength As Double = 0
+            Dim mPolylines As New List(Of IPolyline)
+            Dim mFeature As IFeature
+            Dim mRowBuffer As IRowBuffer
+            Dim mCursor As ICursor
+            Dim mFeatureCursor As IFeatureCursor = Nothing
+            mStreetSegments.myTable.Rows.Clear()
+
+            'Find selected elements in StreetSegment
+            mFeatureLayer = cm.FindLayerByName("StreetSegment", True)
+
+            Dim mWorkspaceEdit As IWorkspaceEdit = cm.StartEditSession(mFeatureLayer)
+
+            If Not mFeatureLayer Is Nothing Then
+
+                mFeatureSelection = mFeatureLayer
+
+                If (mFeatureSelection.SelectionSet.Count > 0) Then
+                    mFeatureSelection.SelectionSet.Search(Nothing, True, mFeatureCursor)
+                    mFeature = mFeatureCursor.NextFeature
+                    Do Until (mFeature Is Nothing)
+                        mCSegmentId = cm.GetFeatureValueAsString(mFeature, "OBJECTID")
+                        mCSource = cm.GetFeatureValueAsString(mFeature, "dataSource")
+                        mCStreetId = cm.GetFeatureValueAsString(mFeature, "streetID")
+                        mStreetSegments.addStreet(mCSegmentId, mCSource, mCStreetId)
+                        mFeature = mFeatureCursor.NextFeature
+                    Loop
+                End If
+            End If
+
+            If mStreetSegments.myTable.Rows.Count = 0 Then
+                cm.Debug("No street segments selected")
+                Exit Sub
+            End If
+
+
+            'Assign street segment list to form 
+            frm.gvStreetSegmentList.DataSource = mStreetSegments.myTable
+            frm.gvStreetSegmentList.Refresh()
+            frm.ShowDialog()
+
+            If frm.DialogResult = Windows.Forms.DialogResult.OK Then
+
+                'Create new record in table street
+                mTable = cm.FindTableByName("Street")
+                If mTable Is Nothing Then
+                    Exit Sub
+                End If
+
+                'Insert values into street table
+                mRowBuffer = mTable.CreateRowBuffer
+                cm.SetRowBufferValue(mRowBuffer, "streetType", frm.fldCBStreetType.SelectedValue)
+                cm.SetRowBufferValue(mRowBuffer, "streetStatus", frm.fldCBStreetStatus.SelectedValue)
+                cm.SetRowBufferValue(mRowBuffer, "nameEnglish", frm.fldTBNameEnglish.Text)
+                cm.SetRowBufferValue(mRowBuffer, "nameArabic", frm.fldTBNameArabic.Text)
+                mCursor = mTable.Insert(True)
+
+                'Get the id of the newly created street
+                Dim streetId As Long
+                streetId = mCursor.InsertRow(mRowBuffer)
+                mCursor.Flush()
+                cm.Release(mCursor)
+
+                'Update street segments
+                cm.UpdateSingleFieldQuery("StreetSegment", "streetID", streetId, Nothing, True)
+
+            End If
+            cm.StopEditSession(mWorkspaceEdit)
+            cm.myDoc.ActiveView.Refresh()
+
+        Catch ex As Exception
+            MsgBox(ex.Message & ex.InnerException.Message)
+        End Try
+
+    End Sub
+
+    Protected Overrides Sub OnUpdate()
+        Enabled = My.ArcMap.Application IsNot Nothing
+    End Sub
+End Class

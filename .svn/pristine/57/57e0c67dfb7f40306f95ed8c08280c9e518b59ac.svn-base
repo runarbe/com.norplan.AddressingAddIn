@@ -1,0 +1,61 @@
+﻿Imports npoAddressingAddIn.Utilities
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+Imports ESRI.ArcGIS.Carto
+
+Public Class RemoveSegmentFromStreet
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Button
+    Dim cm As New Utilities
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnClick()
+        Try
+            Dim mFeatureLayer As IFeatureLayer
+            Dim mFeature As IFeature
+            Dim mFeatureCursor As IFeatureCursor = Nothing
+            Dim mPoint As IPoint = New Point
+            Dim mFeatureSelection As IFeatureSelection
+            Dim mSelectionSet As ISelectionSet
+            Dim mSelectionSet2 As ISelectionSet2
+
+            mFeatureLayer = cm.FindLayerByName("StreetSegment")
+            Dim mWorkspaceEdit As IWorkspaceEdit = cm.StartEditSession(mFeatureLayer)
+
+            mFeatureSelection = mFeatureLayer
+            mSelectionSet = mFeatureSelection.SelectionSet
+            mSelectionSet2 = CType(mSelectionSet, ISelectionSet2)
+            mSelectionSet2.Update(Nothing, True, mFeatureCursor)
+
+            mFeature = mFeatureCursor.NextFeature
+            Do Until mFeature Is Nothing
+                cm.SetFeatureValue(mFeature, "streetID", DBNull.Value)
+                mFeatureCursor.UpdateFeature(mFeature)
+                mFeature = mFeatureCursor.NextFeature
+            Loop
+
+            cm.Release(mFeatureCursor)
+
+            cm.StopEditSession(mWorkspaceEdit)
+            cm.myDoc.ActiveView.Refresh()
+
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+    End Sub
+
+    Protected Overrides Sub OnUpdate()
+
+    End Sub
+End Class

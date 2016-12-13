@@ -1,0 +1,83 @@
+﻿Imports npoAddressingAddIn.Utilities
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.Display
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+Imports ESRI.ArcGIS.Carto
+Imports ESRI.ArcGIS.Controls
+
+Public Class SetStartingPointForStreet
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Tool
+    Dim cm As New Utilities()
+    Dim pSnappingEnvironment As ISnappingEnvironment = Nothing
+    Dim pSnapper As IPointSnapper = Nothing
+    Dim pSnappingFeedback As ISnappingFeedback = Nothing
+    Dim pPosition As IPoint = Nothing
+
+    Protected Overrides Sub OnActivate()
+        MyBase.OnActivate()
+        Try
+            Dim snapUID As UID = New UID()
+            snapUID.Value = "{E07B4C52-C894-4558-B8D4-D4050018D1DA}"
+            pSnappingEnvironment = CType(My.ArcMap.Application.FindExtensionByCLSID(snapUID), ISnappingEnvironment)
+            pSnapper = pSnappingEnvironment.PointSnapper
+            pSnappingFeedback = New SnappingFeedback()
+            pSnappingFeedback.Initialize(My.ArcMap.Application, pSnappingEnvironment, True)
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+
+    End Sub
+
+    Protected Overrides Sub OnRefresh(ByVal hDC As Integer)
+        MyBase.OnRefresh(hDC)
+        Try
+            If Not pSnappingFeedback Is Nothing Then
+                pSnappingFeedback.Refresh(hDC)
+            End If
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+    End Sub
+
+    Protected Overrides Sub OnMouseMove(ByVal arg As ESRI.ArcGIS.Desktop.AddIns.Tool.MouseEventArgs)
+        MyBase.OnMouseMove(arg)
+        Try
+            pPosition = cm.myDoc.ActiveView.ScreenDisplay.DisplayTransformation.ToMapPoint(arg.X, arg.Y)
+            Dim pSnappingResult As ISnappingResult
+            pSnappingResult = pSnapper.Snap(pPosition)
+            pSnappingFeedback.Update(pSnappingResult, 0)
+            If Not pSnappingResult Is Nothing Then
+                pPosition = pSnappingResult.Location
+            End If
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+    End Sub
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnMouseUp(ByVal arg As ESRI.ArcGIS.Desktop.AddIns.Tool.MouseEventArgs)
+        MyBase.OnMouseUp(arg)
+        Try
+            Dim pQueryPoint As IPoint = cm.GetPointFromMouse(arg)
+            If Not cm.mDAUW.GetStreetID = Nothing Then
+                'Alok update for the snapping point
+                cm.InsertStartingPointOfStreet(pPosition, cm.mDAUW.GetStreetID)
+                'cm.InsertStartingPointOfStreet(pQueryPoint, cm.mDAUW.GetStreetID)
+            End If
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+    End Sub
+End Class

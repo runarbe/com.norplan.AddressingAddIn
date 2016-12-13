@@ -1,0 +1,46 @@
+﻿Imports npoAddressingAddIn.Utilities
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.Display
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+Imports ESRI.ArcGIS.Carto
+
+Public Class DeleteStreet
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Button
+    Dim cm As New Utilities
+
+    Public Sub New()
+    End Sub
+
+    Protected Overrides Sub OnClick()
+        Try
+            Dim frm As New frmInputStreetId
+            Dim pFieldId As Integer = Nothing
+            frm.ShowDialog()
+            If Not frm.DialogResult = Windows.Forms.DialogResult.OK Then
+                Exit Sub
+            End If
+            If IsNumeric(frm.fldStreetId.Text) Then
+                pFieldId = CInt(frm.fldStreetId.Text)
+                cm.Debug("Delete street with ID=" & pFieldId)
+                cm.DeleteFromTableWhere("Street", "OBJECTID=" & pFieldId)
+                cm.UpdateSingleFieldQuery("StreetSegment", "streetId", Nothing, "streetId=" & pFieldId, True)
+                cm.myDoc.ActiveView.Refresh()
+            End If
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+    End Sub
+
+    Protected Overrides Sub OnUpdate()
+
+    End Sub
+End Class

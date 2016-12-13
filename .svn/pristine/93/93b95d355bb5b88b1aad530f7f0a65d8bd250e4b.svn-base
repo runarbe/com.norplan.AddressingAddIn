@@ -1,0 +1,18 @@
+﻿Imports npoAddressingAddIn.Utilities
+
+Public Class frmHelp
+    Dim cm As New Utilities
+
+    Private Sub btnClose_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnClose.Click
+        Me.Close()
+    End Sub
+
+    Private Sub frmHelp_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        Dim myHtmlString As New HtmlString
+        myHtmlString.addTag("h1", "Street Addressing Add-In")
+        myHtmlString.addTag("p", "The help section of this add-in is still very much in its infancy.")
+        myHtmlString.addTag("p", "For any questions, please contact (Stein) Runar Bergheim at rb@avinet.no")
+        wbHelp.DocumentText = myHtmlString.GetText
+    End Sub
+
+End Class

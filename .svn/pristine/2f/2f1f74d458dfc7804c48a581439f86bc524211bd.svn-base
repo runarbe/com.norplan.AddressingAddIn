@@ -1,0 +1,398 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{01C30076-CF42-4228-8EDC-DA8B3368BBC5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>npoAddressingAddIn</RootNamespace>
+    <AssemblyName>npoAddressingAddIn</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MyType>Windows</MyType>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionStrict>Off</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>npoAddressingAddIn.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>npoAddressingAddIn.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ESRI.ArcGIS.Desktop.AddIns">
+      <HintPath>C:\Program Files (x86)\ArcGIS\Desktop10.0\Bin\ESRI.ArcGIS.Desktop.AddIns.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ESRI.ArcGIS.Framework">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ESRI.ArcGIS.System">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="ESRI.ArcGIS.esriSystem" />
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Data" />
+    <Import Include="System.Diagnostics" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Forms\frmAddEditIntersection.Designer.vb">
+      <DependentUpon>frmAddEditIntersection.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmAddEditIntersection.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Dwindows\DockableAddressUnitWindow.resx">
+      <DependentUpon>DockableAddressUnitWindow.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmAboutBox.resx">
+      <DependentUpon>frmAboutBox.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmAddEditIntersection.resx">
+      <DependentUpon>frmAddEditIntersection.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmAddressUnit.resx">
+      <DependentUpon>frmAddressUnit.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmAddressUnitSettings.resx">
+      <DependentUpon>frmAddressUnitSettings.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmCommunity.resx">
+      <DependentUpon>frmCommunity.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmHelp.resx">
+      <DependentUpon>frmHelp.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmInputStreetId.resx">
+      <DependentUpon>frmInputStreetId.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmSelectStreetName.resx">
+      <DependentUpon>frmSelectStreetName.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmSetDirection.resx">
+      <DependentUpon>frmSetDirection.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmStreet.resx">
+      <DependentUpon>frmStreet.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\AddressingButtonImages.psd" />
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Config.esriaddinx">
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <Generator>ArcGISAddInHostGenerator</Generator>
+      <LastGenOutput>Config.Designer.vb</LastGenOutput>
+      <SubType>Designer</SubType>
+    </AddInContent>
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\npoAddressingAddIn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Buttons\AboutTheAddIn.vb" />
+    <Compile Include="Buttons\AddToStreet.vb" />
+    <Compile Include="Buttons\DeleteAllAddressUnitsForSelectedStreet.vb" />
+    <Compile Include="Buttons\DeleteStartingPointForSelectedStreet.vb" />
+    <Compile Include="Buttons\DeleteStreet.vb" />
+    <Compile Include="Buttons\RemoveSegmentFromStreet.vb" />
+    <Compile Include="Buttons\ShowAddressUnitWindow.vb" />
+    <Compile Include="Buttons\TestButton.vb" />
+    <Compile Include="Buttons\UpdateFromMCT.vb" />
+    <Compile Include="Dwindows\DockableAddressUnitWindow.Designer.vb">
+      <DependentUpon>DockableAddressUnitWindow.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Dwindows\DockableAddressUnitWindow.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\frmAboutBox.Designer.vb">
+      <DependentUpon>frmAboutBox.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmAboutBox.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmAddressUnit.Designer.vb">
+      <DependentUpon>frmAddressUnit.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmAddressUnit.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmAddressUnitSettings.Designer.vb">
+      <DependentUpon>frmAddressUnitSettings.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmAddressUnitSettings.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmCommunity.Designer.vb">
+      <DependentUpon>frmCommunity.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmCommunity.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmHelp.Designer.vb">
+      <DependentUpon>frmHelp.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmHelp.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmInputStreetId.Designer.vb">
+      <DependentUpon>frmInputStreetId.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmInputStreetId.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmSelectStreetName.Designer.vb">
+      <DependentUpon>frmSelectStreetName.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmSelectStreetName.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmSetDirection.Designer.vb">
+      <DependentUpon>frmSetDirection.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmSetDirection.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmStreet.Designer.vb">
+      <DependentUpon>frmStreet.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmStreet.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Config.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Config.esriaddinx</DependentUpon>
+    </Compile>
+    <Compile Include="Lib\AddressingFeatures.vb" />
+    <Compile Include="Lib\Utilties.vb" />
+    <Compile Include="Buttons\DefineStreet.vb" />
+    <Compile Include="Tools\AddAdrUnitClick.vb" />
+    <Compile Include="Tools\AddIntersection.vb" />
+    <Compile Include="Tools\DeleteAddressUnit.vb" />
+    <Compile Include="Tools\GetStreetLength.vb" />
+    <Compile Include="Tools\SetDirection.vb" />
+    <Compile Include="Tools\EditStreet.vb" />
+    <Compile Include="Tools\FlipStreet.vb" />
+    <Compile Include="Tools\SelectStreet.vb" />
+    <Compile Include="Tools\SetStartingPointForStreet.vb" />
+    <Compile Include="Tools\SetStreetForAddressing.vb" />
+    <Compile Include="Tools\SplitStreetSegment.vb" />
+    <Compile Include="Tools\TestTool.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Accessibility" />
+    <Reference Include="ESRI.ArcGIS.Carto, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86" />
+    <Reference Include="ESRI.ArcGIS.Controls, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86" />
+    <Reference Include="ESRI.ArcGIS.DataSourcesFile, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86" />
+    <Reference Include="ESRI.ArcGIS.DataSourcesGDB, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86" />
+    <Reference Include="ESRI.ArcGIS.Display, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86" />
+    <Reference Include="ESRI.ArcGIS.Editor, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86" />
+    <Reference Include="ESRI.ArcGIS.Geodatabase, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86" />
+    <Reference Include="ESRI.ArcGIS.Geometry, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="ESRI.ArcGIS.ArcMapUI">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\addToStreet.png" />
+    <AddInContent Include="Images\AutoAddress.png" />
+    <AddInContent Include="Images\btnAssignNameToStreet.png" />
+    <AddInContent Include="Images\btnEditAddressUnit.png" />
+    <AddInContent Include="Images\btnGenerateExtentPolygons.png" />
+    <AddInContent Include="Images\btnHelp.png" />
+    <AddInContent Include="Images\createAddressingUnit.png" />
+    <AddInContent Include="Images\defineStreetSimple.png" />
+    <AddInContent Include="Images\deleteAddressUnit.png" />
+    <AddInContent Include="Images\deleteStreet.png" />
+    <AddInContent Include="Images\editCommunity.png" />
+    <AddInContent Include="Images\editStreet.png" />
+    <AddInContent Include="Images\reassignStreetSegment.png" />
+    <AddInContent Include="Images\selectStreets.png" />
+    <AddInContent Include="Images\toolDeleteCommunity.png" />
+    <AddInContent Include="Images\toolFlipStreet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\EditStreet_1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\SetDirection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\SplitStreetSegment.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\UpdateFromMCT.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\TestTool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\RemoveSegmentFromStreet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\TestButton_1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\AboutTheAddIn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\CurrentAddressNumberField.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\AddAdrUnitClick.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\SelectedStreetIdentifierField.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\ShowAddressUnitWindow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\DockableAddressUnitWindow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\SetStreetForAddressing.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\SetStartingPointForStreet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\ToggleAddressingUnitWindowVisibility.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\DeleteAddressUnit_1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\DeleteAllAddressUnitsForSelectedStreet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\DeleteStartingPointForSelectedStreet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\slength.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\AddIntersection.png" />
+  </ItemGroup>
+  <PropertyGroup>
+    <ZipFileExtension>esriAddIn</ZipFileExtension>
+    <AddInTargetProduct>Desktop</AddInTargetProduct>
+    <AddInTargetVersion>10.0</AddInTargetVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\ESRI\ESRI.ArcGIS.AddIns.targets" Condition="Exists('$(MSBuildExtensionsPath)\ESRI\ESRI.ArcGIS.AddIns.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  -->
+  <Target Name="AfterBuild">
+    <!-- Gives build warning when add-in targets file is not found. -->
+    <Warning Text="Unable to create .esriAddin; missing ESRI ArcGIS Add-in SDK component(s)." Condition="!Exists('$(MSBuildExtensionsPath)\ESRI\ESRI.ArcGIS.AddIns.targets')" />
+  </Target>
+  <ProjectExtensions>
+    <!-- Default ESRI add-in properties -->
+    <ESRIAddInProperties>
+      <Host>ArcMap</Host>
+    </ESRIAddInProperties>
+    <VisualStudio />
+  </ProjectExtensions>
+</Project>

@@ -1,0 +1,185 @@
+﻿Imports npoAddressingAddIn.Utilities
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+Imports ESRI.ArcGIS.Carto
+
+Public Class UpdateSelectedIntersections
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Button
+    Dim cm As New Utilities
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnClick() '
+        Dim mLatinSourceField = "RoadName_E"
+        Dim mArabicSourceField = "RoadName_A"
+        Dim mIntersectionLayer As IFeatureLayer
+        Dim mIntersectionFeatureClass As IFeatureClass
+        Dim mPoint As IPoint = New Point
+        Dim mPolygon As IPolygon
+        Dim mSegmentFilter As ISpatialFilter
+        Dim mSourceFilter As ISpatialFilter
+        Dim mGeometryColumn As String
+        Dim mTopologicalOperator As ITopologicalOperator
+        Dim mIntersectionSelectionSet As ISelectionSet
+        Dim mIntersectionSelectionSet2 As ISelectionSet2 = Nothing
+        Dim mStreetSegmentSelectionSet As ISelectionSet
+        Dim mStreetSegmentSelectionSet2 As ISelectionSet2 = Nothing
+        Dim mWorkspaceEdit As IWorkspaceEdit
+        Dim mIntersectionCursor As IFeatureCursor = Nothing
+        Dim mIntersection As IFeature
+        Dim mSegmentPolyline As IPolyline
+        Dim mStreetSegmentLayer As IFeatureLayer
+        Dim mStreetSegmentFeatureClass As IFeatureClass
+        Dim mStreetTable As ITable
+        Try
+
+            'Get street segment layer
+            mIntersectionLayer = cm.FindLayerByName("INTERSECTION")
+            mStreetSegmentLayer = cm.FindLayerByName("StreetSegment")
+            mStreetTable = cm.FindTableByName("Street")
+
+            'Check that both layers and the table are present in the map project
+            If Not mIntersectionLayer Is Nothing And Not mStreetSegmentLayer Is Nothing And Not mStreetTable Is Nothing Then
+
+                'Start an editing session
+                mWorkspaceEdit = cm.StartEditSession(mIntersectionLayer)
+
+                My.ArcMap.Application.StatusBar.Message(0) = "Searching"
+                mIntersectionFeatureClass = mIntersectionLayer.FeatureClass
+                Dim mInteresctionFeatureSelection As IFeatureSelection = mIntersectionLayer
+
+                'Get a handle on the selection
+                mIntersectionSelectionSet2 = CType(mInteresctionFeatureSelection.SelectionSet, ISelectionSet2)
+
+                'Create a cursor
+                mIntersectionSelectionSet2.Update(Nothing, True, mIntersectionCursor)
+
+                'For each selected intersection
+                mIntersection = mIntersectionCursor.NextFeature
+                Dim mCtr = 0
+
+                mStreetSegmentFeatureClass = mStreetSegmentLayer.FeatureClass
+
+                Do Until mIntersection Is Nothing
+
+                    'Get the point the user clicked
+                    mPoint = mIntersection.Shape
+                    mTopologicalOperator = mPoint
+
+                    'Create a polygon from a 5px buffer around the clicked point
+                    Dim mIntersectionType As String = cm.GetFeatureValue(mIntersection, "TYPE")
+                    Select Case mIntersectionType
+                        Case "RA", "BX"
+                            mPolygon = mTopologicalOperator.Buffer(60)
+                        Case "BT", "MT"
+                            mPolygon = mTopologicalOperator.Buffer(25)
+                        Case Else
+                            mPolygon = mTopologicalOperator.Buffer(10)
+                    End Select
+
+                    'Create a spatial filter between the polygon and the geometry column of StreetSegments
+                    mSegmentFilter = New SpatialFilter
+                    mGeometryColumn = mStreetSegmentFeatureClass.ShapeFieldName
+                    With mSegmentFilter
+                        .Geometry = mPolygon
+                        .GeometryField = mGeometryColumn
+                        .SpatialRel = esriSpatialRelEnum.esriSpatialRelIntersects
+                    End With
+
+                    'Perform the select
+                    mStreetSegmentSelectionSet = mStreetSegmentFeatureClass.Select(mSegmentFilter, esriSelectionType.esriSelectionTypeIDSet, esriSelectionOption.esriSelectionOptionNormal, mWorkspaceEdit)
+
+                    'Get a handle on the selection
+                    mStreetSegmentSelectionSet2 = CType(mStreetSegmentSelectionSet, ISelectionSet2)
+
+                    'Query street segments using intersection
+                    Dim mStreetFeatureCursor As IFeatureCursor = Nothing
+                    mStreetSegmentSelectionSet.Search(mSegmentFilter, False, mStreetFeatureCursor)
+
+                    'Create a list to hold the street IDs for each intersection
+                    Dim mStreetIds As New List(Of Integer)
+                    Dim mFreeways As Integer = 0
+                    Dim mHighspeed As Integer = 0
+                    Dim mLowspeed As Integer = 0
+                    Dim mRA As Integer = 0
+
+                    'Iterate through al selected street segments
+                    Dim mStreet As IFeature = mStreetFeatureCursor.NextFeature
+                    Do Until mStreet Is Nothing
+                        'Get the street ID of the intersecting street segments
+                        Dim myId As Integer = cm.GetFeatureValue(mStreet, "streetID")
+
+                        'If the id has not already been added to the intersection, add it
+                        If Not mStreetIds.Contains(myId) Then
+                            mStreetIds.Add(myId)
+                            mCtr = mCtr + 1
+                        End If
+
+                        mStreet = mStreetFeatureCursor.NextFeature
+                    Loop
+
+                    For Each mId As Integer In mStreetIds
+
+                        Dim myStreetQueryFilter As New QueryFilter
+                        myStreetQueryFilter.WhereClause = "OBJECTID=" & mId
+                        Dim myStreetNameCursor As ICursor = mStreetTable.Search(myStreetQueryFilter, False)
+                        Dim myStreet As IRow = myStreetNameCursor.NextRow
+                        If Not myStreet Is Nothing Then
+
+                            Dim myStreetType As Integer = cm.GetRowValue(myStreet, "StreetType")
+                            Select Case myStreetType
+                                Case 1
+                                    mFreeways = mFreeways + 1
+                                Case 2, 7
+                                    mHighspeed = mHighspeed + 1
+                                Case 8
+                                    mRA = mRA + 1
+                                Case 3, 4, 5, 6, 9, 10, 11
+                                    mLowspeed = mLowspeed + 1
+                            End Select
+
+                        End If
+
+                    Next
+
+                    cm.SetFeatureValue(mIntersection, "FREEWAY", mFreeways)
+                    cm.SetFeatureValue(mIntersection, "HIGHSPEED", mHighspeed)
+                    cm.SetFeatureValue(mIntersection, "LOWSPEED", mLowspeed)
+                    cm.SetFeatureValue(mIntersection, "RA", mRA)
+                    mIntersectionCursor.UpdateFeature(mIntersection)
+
+                    mCtr = mCtr + 1
+                    mIntersection = mIntersectionCursor.NextFeature
+                Loop
+
+                MsgBox(mCtr)
+
+                cm.Release(mIntersectionCursor)
+                cm.StopEditSession(mWorkspaceEdit)
+
+                'Refesh the view to display the selection
+                cm.myDoc.ActiveView.Refresh()
+
+            End If 'If layer exists
+
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+
+    End Sub
+
+    Protected Overrides Sub OnUpdate()
+
+    End Sub
+End Class

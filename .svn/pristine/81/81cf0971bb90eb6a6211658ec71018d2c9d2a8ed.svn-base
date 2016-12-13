@@ -1,0 +1,234 @@
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+Partial Class frmStreet
+    Inherits System.Windows.Forms.Form
+
+    'Form overrides dispose to clean up the component list.
+    <System.Diagnostics.DebuggerNonUserCode()> _
+    Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+        Try
+            If disposing AndAlso components IsNot Nothing Then
+                components.Dispose()
+            End If
+        Finally
+            MyBase.Dispose(disposing)
+        End Try
+    End Sub
+
+    'Required by the Windows Form Designer
+    Private components As System.ComponentModel.IContainer
+
+    'NOTE: The following procedure is required by the Windows Form Designer
+    'It can be modified using the Windows Form Designer.  
+    'Do not modify it using the code editor.
+    <System.Diagnostics.DebuggerStepThrough()> _
+    Private Sub InitializeComponent()
+        Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel
+        Me.OK_Button = New System.Windows.Forms.Button
+        Me.Cancel_Button = New System.Windows.Forms.Button
+        Me.fldCBStreetType = New System.Windows.Forms.ComboBox
+        Me.gvStreetSegmentList = New System.Windows.Forms.DataGridView
+        Me.lblCommunity = New System.Windows.Forms.Label
+        Me.Label2 = New System.Windows.Forms.Label
+        Me.Label1 = New System.Windows.Forms.Label
+        Me.fldCBArea = New System.Windows.Forms.ComboBox
+        Me.fldCBStreetStatus = New System.Windows.Forms.ComboBox
+        Me.Label3 = New System.Windows.Forms.Label
+        Me.fldTBNameEnglish = New System.Windows.Forms.TextBox
+        Me.fldTBNameArabic = New System.Windows.Forms.TextBox
+        Me.Label4 = New System.Windows.Forms.Label
+        Me.Label5 = New System.Windows.Forms.Label
+        Me.TableLayoutPanel1.SuspendLayout()
+        CType(Me.gvStreetSegmentList, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SuspendLayout()
+        '
+        'TableLayoutPanel1
+        '
+        Me.TableLayoutPanel1.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.TableLayoutPanel1.ColumnCount = 2
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 0, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
+        Me.TableLayoutPanel1.Location = New System.Drawing.Point(307, 268)
+        Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
+        Me.TableLayoutPanel1.RowCount = 1
+        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel1.Size = New System.Drawing.Size(145, 29)
+        Me.TableLayoutPanel1.TabIndex = 0
+        '
+        'OK_Button
+        '
+        Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.OK_Button.Location = New System.Drawing.Point(3, 3)
+        Me.OK_Button.Name = "OK_Button"
+        Me.OK_Button.Size = New System.Drawing.Size(66, 23)
+        Me.OK_Button.TabIndex = 0
+        Me.OK_Button.Text = "OK"
+        '
+        'Cancel_Button
+        '
+        Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.Cancel_Button.Location = New System.Drawing.Point(75, 3)
+        Me.Cancel_Button.Name = "Cancel_Button"
+        Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
+        Me.Cancel_Button.TabIndex = 1
+        Me.Cancel_Button.Text = "Cancel"
+        '
+        'fldCBStreetClass
+        '
+        Me.fldCBStreetType.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
+        Me.fldCBStreetType.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+        Me.fldCBStreetType.FormattingEnabled = True
+        Me.fldCBStreetType.Location = New System.Drawing.Point(106, 39)
+        Me.fldCBStreetType.Name = "fldCBStreetClass"
+        Me.fldCBStreetType.Size = New System.Drawing.Size(345, 21)
+        Me.fldCBStreetType.TabIndex = 2
+        '
+        'gvStreetSegmentList
+        '
+        Me.gvStreetSegmentList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.gvStreetSegmentList.Location = New System.Drawing.Point(106, 149)
+        Me.gvStreetSegmentList.Name = "gvStreetSegmentList"
+        Me.gvStreetSegmentList.Size = New System.Drawing.Size(345, 109)
+        Me.gvStreetSegmentList.TabIndex = 2
+        '
+        'lblCommunity
+        '
+        Me.lblCommunity.AutoSize = True
+        Me.lblCommunity.Location = New System.Drawing.Point(9, 14)
+        Me.lblCommunity.Name = "lblCommunity"
+        Me.lblCommunity.Size = New System.Drawing.Size(29, 13)
+        Me.lblCommunity.TabIndex = 12
+        Me.lblCommunity.Text = "Area"
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(9, 42)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(62, 13)
+        Me.Label2.TabIndex = 7
+        Me.Label2.Text = "Street Type"
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(9, 149)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(54, 13)
+        Me.Label1.TabIndex = 10
+        Me.Label1.Text = "Segments"
+        '
+        'fldCBArea
+        '
+        Me.fldCBArea.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest
+        Me.fldCBArea.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+        Me.fldCBArea.FormattingEnabled = True
+        Me.fldCBArea.Location = New System.Drawing.Point(106, 11)
+        Me.fldCBArea.Name = "fldCBArea"
+        Me.fldCBArea.Size = New System.Drawing.Size(345, 21)
+        Me.fldCBArea.TabIndex = 1
+        '
+        'fldCBStreetStatus
+        '
+        Me.fldCBStreetStatus.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
+        Me.fldCBStreetStatus.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+        Me.fldCBStreetStatus.FormattingEnabled = True
+        Me.fldCBStreetStatus.Location = New System.Drawing.Point(106, 67)
+        Me.fldCBStreetStatus.Name = "fldCBStreetStatus"
+        Me.fldCBStreetStatus.Size = New System.Drawing.Size(345, 21)
+        Me.fldCBStreetStatus.TabIndex = 3
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(9, 70)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(68, 13)
+        Me.Label3.TabIndex = 12
+        Me.Label3.Text = "Street Status"
+        '
+        'fldTBNameEnglish
+        '
+        Me.fldTBNameEnglish.Location = New System.Drawing.Point(106, 95)
+        Me.fldTBNameEnglish.Name = "fldTBNameEnglish"
+        Me.fldTBNameEnglish.Size = New System.Drawing.Size(345, 20)
+        Me.fldTBNameEnglish.TabIndex = 4
+        '
+        'fldTBNameArabic
+        '
+        Me.fldTBNameArabic.Location = New System.Drawing.Point(106, 122)
+        Me.fldTBNameArabic.Name = "fldTBNameArabic"
+        Me.fldTBNameArabic.RightToLeft = System.Windows.Forms.RightToLeft.Yes
+        Me.fldTBNameArabic.Size = New System.Drawing.Size(345, 20)
+        Me.fldTBNameArabic.TabIndex = 5
+        '
+        'Label4
+        '
+        Me.Label4.AutoSize = True
+        Me.Label4.Location = New System.Drawing.Point(9, 98)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(72, 13)
+        Me.Label4.TabIndex = 15
+        Me.Label4.Text = "Name English"
+        '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Location = New System.Drawing.Point(9, 125)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(68, 13)
+        Me.Label5.TabIndex = 16
+        Me.Label5.Text = "Name Arabic"
+        '
+        'frmStreet
+        '
+        Me.AcceptButton = Me.OK_Button
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.CancelButton = Me.Cancel_Button
+        Me.ClientSize = New System.Drawing.Size(464, 313)
+        Me.Controls.Add(Me.Label5)
+        Me.Controls.Add(Me.Label4)
+        Me.Controls.Add(Me.fldTBNameArabic)
+        Me.Controls.Add(Me.fldTBNameEnglish)
+        Me.Controls.Add(Me.Label3)
+        Me.Controls.Add(Me.fldCBStreetStatus)
+        Me.Controls.Add(Me.Label1)
+        Me.Controls.Add(Me.Label2)
+        Me.Controls.Add(Me.lblCommunity)
+        Me.Controls.Add(Me.fldCBArea)
+        Me.Controls.Add(Me.gvStreetSegmentList)
+        Me.Controls.Add(Me.fldCBStreetType)
+        Me.Controls.Add(Me.TableLayoutPanel1)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
+        Me.MaximizeBox = False
+        Me.MinimizeBox = False
+        Me.Name = "frmStreet"
+        Me.ShowInTaskbar = False
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
+        Me.Text = "Street"
+        Me.TableLayoutPanel1.ResumeLayout(False)
+        CType(Me.gvStreetSegmentList, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.ResumeLayout(False)
+        Me.PerformLayout()
+
+    End Sub
+    Friend WithEvents TableLayoutPanel1 As System.Windows.Forms.TableLayoutPanel
+    Friend WithEvents OK_Button As System.Windows.Forms.Button
+    Friend WithEvents Cancel_Button As System.Windows.Forms.Button
+    Friend WithEvents fldCBStreetType As System.Windows.Forms.ComboBox
+    Friend WithEvents gvStreetSegmentList As System.Windows.Forms.DataGridView
+    Friend WithEvents lblCommunity As System.Windows.Forms.Label
+    Friend WithEvents Label2 As System.Windows.Forms.Label
+    Friend WithEvents Label1 As System.Windows.Forms.Label
+    Friend WithEvents fldCBArea As System.Windows.Forms.ComboBox
+    Friend WithEvents fldCBStreetStatus As System.Windows.Forms.ComboBox
+    Friend WithEvents Label3 As System.Windows.Forms.Label
+    Friend WithEvents fldTBNameEnglish As System.Windows.Forms.TextBox
+    Friend WithEvents fldTBNameArabic As System.Windows.Forms.TextBox
+    Friend WithEvents Label4 As System.Windows.Forms.Label
+    Friend WithEvents Label5 As System.Windows.Forms.Label
+
+End Class

@@ -1,0 +1,61 @@
+﻿Imports ESRI.ArcGIS.Geometry
+Imports npoAddressingAddIn.Utilities
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+Imports ESRI.ArcGIS.Carto
+
+Public Class DeleteStartingPointForSelectedStreet
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Button
+    Dim cm As New npoAddressingAddIn.Utilities
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnClick()
+        Try
+            Dim mStreetID As String = cm.mDAUW.GetStreetID
+
+            'Check that street id is not empty
+            If Not mStreetID.Equals("") Then
+                Dim mFeature As IFeature
+                Dim mCursor As IFeatureCursor
+                Dim mLayer As IFeatureLayer = cm.FindLayerByName("StartingPoint")
+                Dim mFeatureClass As IFeatureClass = mLayer.FeatureClass
+
+                'Query all address units with the right street ID
+                mCursor = cm.PerformSpatialQuery(mLayer.FeatureClass, Nothing, esriSpatialRelEnum.esriSpatialRelUndefined, "FK_STREET_ID=" & mStreetID)
+
+                'Check if cursor returned anything
+                If Not mCursor Is Nothing Then
+
+                    'Confirm deletion
+                    If MsgBox("Delete starting point associated with street " & mStreetID & "?", MsgBoxStyle.YesNoCancel, "Confirm deletion...") = MsgBoxResult.Yes Then
+
+                        mFeature = mCursor.NextFeature
+                        Do Until mFeature Is Nothing
+                            mFeature.Delete()
+                            mFeature = mCursor.NextFeature
+                        Loop
+                        cm.myDoc.ActiveView.Refresh()
+                    End If
+                End If
+            End If
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+
+    End Sub
+
+    Protected Overrides Sub OnUpdate()
+
+    End Sub
+End Class

@@ -1,0 +1,55 @@
+﻿Public Class frmAddressUnit
+
+    Private Sub Label2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label2.Click
+
+    End Sub
+
+    Private Sub btnOK_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnOK.Click
+        Me.DialogResult = Windows.Forms.DialogResult.OK '
+        Me.Close()
+    End Sub
+
+    Private Sub btnCancel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnCancel.Click
+        Me.DialogResult = Windows.Forms.DialogResult.Cancel
+        Me.Close()
+    End Sub
+
+    Private Sub frmAddressUnit_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+
+    End Sub
+
+    Public Sub New()
+
+        ' This call is required by the Windows Form Designer.
+        InitializeComponent()
+
+        ' Add any initialization after the InitializeComponent() call.
+        Dim myAddressUnitTypes As New DataTable
+        myAddressUnitTypes.Columns.Add("key")
+        myAddressUnitTypes.Columns.Add("value")
+
+        Dim myRow As DataRow
+        myRow = myAddressUnitTypes.NewRow
+        myRow("value") = 1
+        myRow("key") = "Regular"
+        myAddressUnitTypes.Rows.Add(myRow)
+        myRow = myAddressUnitTypes.NewRow
+        myRow("value") = 2
+        myRow("key") = "Gate"
+        myAddressUnitTypes.Rows.Add(myRow)
+        myRow = myAddressUnitTypes.NewRow
+        myRow("value") = 3
+        myRow("key") = "Farm"
+        myAddressUnitTypes.Rows.Add(myRow)
+
+        Me.cbAddressUnitType.DataSource = myAddressUnitTypes
+        Me.cbAddressUnitType.ValueMember = "value"
+        Me.cbAddressUnitType.DisplayMember = "key"
+        Me.cbAddressUnitType.Refresh()
+
+    End Sub
+
+    Private Sub cbAddressUnitType_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cbAddressUnitType.SelectedIndexChanged
+
+    End Sub
+End Class

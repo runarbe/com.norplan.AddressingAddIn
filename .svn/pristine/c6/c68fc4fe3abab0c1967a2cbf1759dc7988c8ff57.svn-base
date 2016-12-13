@@ -1,0 +1,60 @@
+﻿Imports npoAddressingAddIn.Utilities
+Imports ESRI.ArcGIS.Carto
+Imports ESRI.ArcGIS.Geodatabase
+
+Public Class frmCommunity
+    Dim cm As New Utilities()
+
+    Private Sub btnCancel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnCancel.Click
+        Me.DialogResult = Windows.Forms.DialogResult.Cancel
+        Me.Close()
+    End Sub
+
+    Private Sub btnOK_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnOK.Click
+        Me.DialogResult = Windows.Forms.DialogResult.OK
+        Me.Close()
+    End Sub
+
+    Private Sub frmCommunity_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+
+    End Sub
+
+    Public Sub New()
+
+        'Initialize
+        InitializeComponent()
+
+        'Populate themes
+        Me.cbAssignedTheme.DataSource = cm.GetComboValues("Themes", "ID", "themeNameEnglish", "themeNameArabic")
+        Me.cbAssignedTheme.ValueMember = "value"
+        Me.cbAssignedTheme.DisplayMember = "key"
+        Me.cbAssignedTheme.Refresh()
+
+        'Populate english district names
+        Me.cbDistrictNameEnglish.DataSource = cm.GetComboValuesSingle("neighborhoods", "districtNameEnglish")
+        Me.cbDistrictNameEnglish.ValueMember = "key"
+        Me.cbDistrictNameEnglish.DisplayMember = "key"
+        Me.cbDistrictNameEnglish.Refresh()
+
+        'Populate arabic district names
+        Me.cbDistrictNameArabic.DataSource = cm.GetComboValuesSingle("neighborhoods", "districtNameArabic")
+        Me.cbDistrictNameArabic.ValueMember = "key"
+        Me.cbDistrictNameArabic.DisplayMember = "key"
+        Me.cbDistrictNameArabic.Refresh()
+
+    End Sub
+
+    Private Sub cbDistrictNameEnglish_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cbDistrictNameEnglish.SelectedIndexChanged
+        If Not Me.cbDistrictNameArabic.ValueMember = "" Then
+            Me.cbDistrictNameArabic.SelectedValue = cm.GetSingleFieldFromQuery("neighborhoods", "districtNameArabic", "districtNameEnglish='" & Me.cbDistrictNameEnglish.Text & "'")
+            Me.cbDistrictNameArabic.Refresh()
+        End If
+    End Sub
+
+    Private Sub cbDistrictNameArabic_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cbDistrictNameArabic.SelectedIndexChanged
+        If Not Me.cbDistrictNameEnglish.ValueMember = "" Then
+            Me.cbDistrictNameEnglish.SelectedValue = cm.GetSingleFieldFromQuery("neighborhoods", "districtNameEnglish", "districtNameArabic='" & Me.cbDistrictNameArabic.Text & "'")
+            Me.cbDistrictNameEnglish.Refresh()
+        End If
+    End Sub
+End Class

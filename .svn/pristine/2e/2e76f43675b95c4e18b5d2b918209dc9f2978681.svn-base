@@ -1,0 +1,205 @@
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+Partial Class DockableAddressUnitWindow
+  Inherits System.Windows.Forms.UserControl
+
+  'Form overrides dispose to clean up the component list.
+  <System.Diagnostics.DebuggerNonUserCode()> _
+  Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+    If disposing AndAlso components IsNot Nothing Then
+      components.Dispose()
+    End If
+    MyBase.Dispose(disposing)
+  End Sub
+
+  'Required by the Windows Form Designer
+  Private components As System.ComponentModel.IContainer
+
+  'NOTE: The following procedure is required by the Windows Form Designer
+  'It can be modified using the Windows Form Designer.  
+  'Do not modify it using the code editor.
+  <System.Diagnostics.DebuggerStepThrough()> _
+  Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(DockableAddressUnitWindow))
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
+        Me.TextBox1 = New System.Windows.Forms.TextBox()
+        Me.cmbAddressUnitResolution = New System.Windows.Forms.ComboBox()
+        Me.tbCurrentAdrUnitNumber = New System.Windows.Forms.TextBox()
+        Me.tbSelectedStreet = New System.Windows.Forms.TextBox()
+        Me.Label5 = New System.Windows.Forms.Label()
+        Me.Label6 = New System.Windows.Forms.Label()
+        Me.cmbAddressUnitType = New System.Windows.Forms.ComboBox()
+        Me.cmbAddressUnitStatus = New System.Windows.Forms.ComboBox()
+        Me.TableLayoutPanel1.SuspendLayout()
+        Me.SuspendLayout()
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Label1.Location = New System.Drawing.Point(3, 54)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(94, 27)
+        Me.Label1.TabIndex = 1
+        Me.Label1.Text = "Adr unit resolution"
+        Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Label2.Location = New System.Drawing.Point(3, 27)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(94, 27)
+        Me.Label2.TabIndex = 3
+        Me.Label2.Text = "Current adr unit #"
+        Me.Label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Label3.Location = New System.Drawing.Point(3, 0)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(94, 27)
+        Me.Label3.TabIndex = 5
+        Me.Label3.Text = "Selected street"
+        Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        '
+        'TableLayoutPanel1
+        '
+        Me.TableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
+        Me.TableLayoutPanel1.ColumnCount = 2
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
+        Me.TableLayoutPanel1.Controls.Add(Me.TextBox1, 0, 5)
+        Me.TableLayoutPanel1.Controls.Add(Me.cmbAddressUnitResolution, 1, 2)
+        Me.TableLayoutPanel1.Controls.Add(Me.tbCurrentAdrUnitNumber, 1, 1)
+        Me.TableLayoutPanel1.Controls.Add(Me.tbSelectedStreet, 1, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.Label2, 0, 1)
+        Me.TableLayoutPanel1.Controls.Add(Me.Label1, 0, 2)
+        Me.TableLayoutPanel1.Controls.Add(Me.Label3, 0, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.Label5, 0, 3)
+        Me.TableLayoutPanel1.Controls.Add(Me.Label6, 0, 4)
+        Me.TableLayoutPanel1.Controls.Add(Me.cmbAddressUnitType, 2, 3)
+        Me.TableLayoutPanel1.Controls.Add(Me.cmbAddressUnitStatus, 1, 4)
+        Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.TableLayoutPanel1.Location = New System.Drawing.Point(0, 0)
+        Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
+        Me.TableLayoutPanel1.RowCount = 6
+        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27.0!))
+        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27.0!))
+        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27.0!))
+        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27.0!))
+        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27.0!))
+        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.TableLayoutPanel1.Size = New System.Drawing.Size(280, 400)
+        Me.TableLayoutPanel1.TabIndex = 6
+        '
+        'TextBox1
+        '
+        Me.TableLayoutPanel1.SetColumnSpan(Me.TextBox1, 2)
+        Me.TextBox1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.TextBox1.Location = New System.Drawing.Point(3, 138)
+        Me.TextBox1.Multiline = True
+        Me.TextBox1.Name = "TextBox1"
+        Me.TextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
+        Me.TextBox1.Size = New System.Drawing.Size(275, 259)
+        Me.TextBox1.TabIndex = 11
+        Me.TextBox1.Text = resources.GetString("TextBox1.Text")
+        '
+        'cmbAddressUnitResolution
+        '
+        Me.cmbAddressUnitResolution.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.cmbAddressUnitResolution.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbAddressUnitResolution.FormattingEnabled = True
+        Me.cmbAddressUnitResolution.Items.AddRange(New Object() {"20", "200", "2000", "5", "10", "15", "20", "25", "30", "35", "40", "45", "50"})
+        Me.cmbAddressUnitResolution.Location = New System.Drawing.Point(103, 57)
+        Me.cmbAddressUnitResolution.Name = "cmbAddressUnitResolution"
+        Me.cmbAddressUnitResolution.Size = New System.Drawing.Size(175, 21)
+        Me.cmbAddressUnitResolution.TabIndex = 8
+        '
+        'tbCurrentAdrUnitNumber
+        '
+        Me.tbCurrentAdrUnitNumber.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.tbCurrentAdrUnitNumber.Location = New System.Drawing.Point(103, 30)
+        Me.tbCurrentAdrUnitNumber.Name = "tbCurrentAdrUnitNumber"
+        Me.tbCurrentAdrUnitNumber.Size = New System.Drawing.Size(175, 20)
+        Me.tbCurrentAdrUnitNumber.TabIndex = 7
+        Me.tbCurrentAdrUnitNumber.Text = "1"
+        '
+        'tbSelectedStreet
+        '
+        Me.tbSelectedStreet.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.tbSelectedStreet.Location = New System.Drawing.Point(103, 3)
+        Me.tbSelectedStreet.Name = "tbSelectedStreet"
+        Me.tbSelectedStreet.ReadOnly = True
+        Me.tbSelectedStreet.Size = New System.Drawing.Size(175, 20)
+        Me.tbSelectedStreet.TabIndex = 6
+        '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Label5.Location = New System.Drawing.Point(3, 81)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(94, 27)
+        Me.Label5.TabIndex = 12
+        Me.Label5.Text = "Adr unit type"
+        Me.Label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Label6.Location = New System.Drawing.Point(3, 108)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(94, 27)
+        Me.Label6.TabIndex = 13
+        Me.Label6.Text = "Adr unit status"
+        Me.Label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        '
+        'cmbAddressUnitType
+        '
+        Me.cmbAddressUnitType.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.cmbAddressUnitType.FormattingEnabled = True
+        Me.cmbAddressUnitType.Location = New System.Drawing.Point(103, 84)
+        Me.cmbAddressUnitType.Name = "cmbAddressUnitType"
+        Me.cmbAddressUnitType.Size = New System.Drawing.Size(175, 21)
+        Me.cmbAddressUnitType.TabIndex = 14
+        '
+        'cmbAddressUnitStatus
+        '
+        Me.cmbAddressUnitStatus.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.cmbAddressUnitStatus.FormattingEnabled = True
+        Me.cmbAddressUnitStatus.Location = New System.Drawing.Point(103, 111)
+        Me.cmbAddressUnitStatus.Name = "cmbAddressUnitStatus"
+        Me.cmbAddressUnitStatus.Size = New System.Drawing.Size(175, 21)
+        Me.cmbAddressUnitStatus.TabIndex = 15
+        '
+        'DockableAddressUnitWindow
+        '
+        Me.Controls.Add(Me.TableLayoutPanel1)
+        Me.Name = "DockableAddressUnitWindow"
+        Me.Size = New System.Drawing.Size(280, 400)
+        Me.TableLayoutPanel1.ResumeLayout(False)
+        Me.TableLayoutPanel1.PerformLayout()
+        Me.ResumeLayout(False)
+
+    End Sub
+    Friend WithEvents Label1 As System.Windows.Forms.Label
+    Friend WithEvents Label2 As System.Windows.Forms.Label
+    Friend WithEvents Label3 As System.Windows.Forms.Label
+    Friend WithEvents TableLayoutPanel1 As System.Windows.Forms.TableLayoutPanel
+    Friend WithEvents tbSelectedStreet As System.Windows.Forms.TextBox
+    Friend WithEvents tbCurrentAdrUnitNumber As System.Windows.Forms.TextBox
+    Friend WithEvents cmbAddressUnitResolution As System.Windows.Forms.ComboBox
+    Friend WithEvents TextBox1 As System.Windows.Forms.TextBox
+    Friend WithEvents Label5 As System.Windows.Forms.Label
+    Friend WithEvents Label6 As System.Windows.Forms.Label
+    Friend WithEvents cmbAddressUnitType As System.Windows.Forms.ComboBox
+    Friend WithEvents cmbAddressUnitStatus As System.Windows.Forms.ComboBox
+
+End Class

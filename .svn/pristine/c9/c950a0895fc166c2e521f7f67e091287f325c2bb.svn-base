@@ -1,0 +1,63 @@
+﻿Imports npoAddressingAddIn.Utilities
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+Imports ESRI.ArcGIS.Carto
+
+Public Class AddAdrUnitClick
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Tool
+    Dim cm As New Utilities()
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnUpdate()
+    End Sub
+
+    Protected Overrides Sub OnMouseUp(ByVal arg As ESRI.ArcGIS.Desktop.AddIns.Tool.MouseEventArgs)
+        MyBase.OnMouseUp(arg)
+        Try
+            Dim mPoint As IPoint
+            mPoint = cm.myDoc.ActiveView.ScreenDisplay.DisplayTransformation.ToMapPoint(arg.X, arg.Y)
+
+            If cm.mDAUW.tbSelectedStreet.Text = "" Then
+                MsgBox("Please select a street", MsgBoxStyle.Exclamation, "Warning")
+                Exit Sub
+            End If
+            If arg.Control = True Then 'Skip adding number
+                cm.mDAUW.IncrementAddressUnitNumber()
+            ElseIf arg.Alt = True Then 'Decrease number
+                cm.mDAUW.DecrementAddressUnitNumber()
+            ElseIf arg.Shift = True Then 'Add subnumber
+                cm.mDAUW.IncrementSubdivisionLetter()
+                cm.InsertAddressUnitNumber(mPoint, cm.mDAUW.GetAddressNumber)
+            Else 'If nothing pressed, add address unit number and increase by one
+                cm.InsertAddressUnitNumber(mPoint, cm.mDAUW.mCurrentAddressUnitNumber)
+                cm.mDAUW.IncrementAddressUnitNumber()
+            End If
+        Catch ex As Exception
+            cm.Debug(ex.Message)
+        End Try
+
+    End Sub
+
+    Protected Overrides Sub OnKeyUp(ByVal arg As ESRI.ArcGIS.Desktop.AddIns.Tool.KeyEventArgs)
+        MyBase.OnKeyUp(arg)
+        If arg.KeyCode() = System.Windows.Forms.Keys.S Then
+            cm.mDAUW.SetAddressNumber(1)
+            cm.mDAUW.SetStreetID("")
+        ElseIf arg.KeyCode() = System.Windows.Forms.Keys.A Then
+            cm.mDAUW.SetAddressNumber(1)
+        End If
+    End Sub
+
+End Class

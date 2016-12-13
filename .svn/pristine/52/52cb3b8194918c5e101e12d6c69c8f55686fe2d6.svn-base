@@ -1,0 +1,152 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+npoAddressingAddIn
+</name>
+</assembly>
+<members>
+<member name="T:npoAddressingAddIn.TestTool">
+	<summary>
+ Transfer attributes from muscat municipality roads to overlapping features from StreetSegment
+ </summary>
+	<remarks></remarks>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.DefineStreet">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_DefineStreet', the id declared for Add-in Button class 'DefineStreet'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.AddToStreet">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_AddToStreet', the id declared for Add-in Button class 'AddToStreet'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.DeleteStreet">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_DeleteStreet', the id declared for Add-in Button class 'DeleteStreet'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.UpdateFromMCT">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_UpdateFromMCT', the id declared for Add-in Button class 'UpdateFromMCT'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.RemoveSegmentFromStreet">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_RemoveSegmentFromStreet', the id declared for Add-in Button class 'RemoveSegmentFromStreet'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.TestButton">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_TestButton', the id declared for Add-in Button class 'TestButton'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.AboutTheAddIn">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_AboutTheAddIn', the id declared for Add-in Button class 'AboutTheAddIn'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.ShowAddressUnitWindow">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_ShowAddressUnitWindow', the id declared for Add-in Button class 'ShowAddressUnitWindow'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.DeleteAllAddressUnitsForSelectedStreet">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_DeleteAllAddressUnitsForSelectedStreet', the id declared for Add-in Button class 'DeleteAllAddressUnitsForSelectedStreet'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.DeleteStartingPointForSelectedStreet">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_DeleteStartingPointForSelectedStreet', the id declared for Add-in Button class 'DeleteStartingPointForSelectedStreet'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.EditStreet">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_EditStreet', the id declared for Add-in Tool class 'EditStreet'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.SelectStreet">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_SelectStreet', the id declared for Add-in Tool class 'SelectStreet'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.FlipStreet">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_FlipStreet', the id declared for Add-in Tool class 'FlipStreet'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.SetDirection">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_SetDirection', the id declared for Add-in Tool class 'SetDirection'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.SplitStreetSegment">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_SplitStreetSegment', the id declared for Add-in Tool class 'SplitStreetSegment'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.TestTool">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_TestTool', the id declared for Add-in Tool class 'TestTool'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.AddAdrUnitClick">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_AddAdrUnitClick', the id declared for Add-in Tool class 'AddAdrUnitClick'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.SetStreetForAddressing">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_SetStreetForAddressing', the id declared for Add-in Tool class 'SetStreetForAddressing'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.GetStreetLength">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_GetStreetLength', the id declared for Add-in Tool class 'GetStreetLength'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.SetStartingPointForStreet">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_SetStartingPointForStreet', the id declared for Add-in Tool class 'SetStartingPointForStreet'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.DeleteAddressUnit">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_DeleteAddressUnit', the id declared for Add-in Tool class 'DeleteAddressUnit'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.AddIntersection">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_AddIntersection', the id declared for Add-in Tool class 'AddIntersection'
+</summary>
+</member><member name="P:npoAddressingAddIn.My.ThisAddIn.IDs.DockableAddressUnitWindow">
+	<summary>
+Returns 'NORPLAN_Oman_npoAddressingAddIn_DockableAddressUnitWindow', the id declared for Add-in DockableWindow class 'DockableAddressUnitWindow+AddinImpl'
+</summary>
+</member><member name="T:npoAddressingAddIn.My.ThisAddIn.IDs">
+	<summary>
+A class for looking up Add-in id strings declared in the associated configuration xml file (.esriaddinx).
+</summary>
+</member><member name="T:npoAddressingAddIn.My.ThisAddIn">
+	<summary>
+A class for looking up declarative information in the associated configuration xml file (.esriaddinx).
+</summary>
+</member><member name="M:npoAddressingAddIn.My.Internal.AddInStartupObject.GetThis">
+	<summary>
+ Expose this instance of Add-in class externally
+ </summary>
+</member><member name="T:npoAddressingAddIn.Utilities.myStreetSegments">
+	<summary>
+ Utility class to hold key information from selected street segments
+ </summary>
+	<remarks></remarks>
+</member><member name="P:npoAddressingAddIn.DockableAddressUnitWindow.Hook">
+	<summary>
+ Host object of the dockable window
+ </summary>
+</member><member name="T:npoAddressingAddIn.DockableAddressUnitWindow.AddinImpl">
+	<summary>
+ Implementation class of the dockable window add-in. It is responsible for
+ creating and disposing the user interface class for the dockable window.
+ </summary>
+</member><member name="T:npoAddressingAddIn.DockableAddressUnitWindow">
+	<summary>
+ Designer class of the dockable window add-in. It contains user interfaces that
+ make up the dockable window.
+ </summary>
+</member><member name="P:npoAddressingAddIn.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:npoAddressingAddIn.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="T:npoAddressingAddIn.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+</members>
+</doc>

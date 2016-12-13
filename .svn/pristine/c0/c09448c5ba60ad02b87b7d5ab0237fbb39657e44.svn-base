@@ -1,0 +1,1162 @@
+﻿Imports System.Windows.Forms
+Imports ESRI.ArcGIS.Carto
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Display
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+Imports npoAddressingAddIn.Utilities
+Imports System.Text
+Imports System.ComponentModel
+Imports System.Reflection
+Imports System.Linq.Queryable
+Imports System.Linq
+
+Class Utilities
+
+    'Get document
+    Public myDoc As IMxDocument = My.ArcMap.Document
+
+    'Dockable address unit window
+    Public mDAUWAII As DockableAddressUnitWindow.AddinImpl = ESRI.ArcGIS.Desktop.AddIns.AddIn.FromID(Of DockableAddressUnitWindow.AddinImpl)(My.ThisAddIn.IDs.DockableAddressUnitWindow)
+    Public mDAUW As DockableAddressUnitWindow = mDAUWAII.UI
+
+    Public Enum streetTypeEnumeration As Integer
+        MajorArterial = 1
+        Arterial = 2
+        MajorCollector = 3
+        Collector = 4
+        LocalStreet = 5
+        RoadExit = 6
+        Interchange = 7
+        Roundabout = 8
+        Pedestrian = 9
+        ServiceRoad = 10
+        SinglePropertyAccess = 11
+    End Enum
+
+    Public Enum streetStatusEnumeration As Integer
+        Planned = 1
+        Current = 2
+        Demolished = 3
+    End Enum
+
+    Public Enum addressUnitType As Integer
+        Building = 1
+        Entrance = 2
+        Gate = 3
+        Plot = 4
+    End Enum
+
+    Public Enum addressUnitStatus As Integer
+        Current = 1
+        Planned = 2
+        Demolished = 3
+    End Enum
+
+    Public Enum addressUnitResolution As Integer
+        _5m = 5
+        _10m = 10
+        _15m = 15
+        _20m = 20
+        _30m = 30
+        _40m = 40
+        _50m = 50
+        _100m = 100
+        _200m = 200
+        _2000m = 2000
+    End Enum
+
+    Public Enum intersectionTypes2
+        <Description("Big X-intersection")> BX = 1
+        <Description("X-intersection")> X = 1
+        <Description("Y-intersection")> Y = 1
+        <Description("Big T-intersection")> BT = 4
+        <Description("T-intersection")> T = 5
+        <Description("Mixed T-intersection")> MT = 6
+        <Description("Roundabout")> RA = 7
+        <Description("Cul-de-sac")> CS = 8
+        <Description("Connector street")> CN = 9
+        <Description("Other")> OT = 99
+    End Enum
+
+    Public Enum intersectionTypes As Integer
+        BX = 1
+        X = 2
+        Y = 3
+        BT = 4
+        T = 5
+        MT = 6
+        RA = 7
+        CS = 8
+        CN = 9
+        OT = 99
+    End Enum
+
+    Public Sub New()
+        Me.InitializeVariables()
+    End Sub
+
+    Public Sub InitializeVariables()
+        Me.myDoc = My.ArcMap.Document
+    End Sub
+
+    Class CbItem
+        Private _Item As CbItem
+        Public Property CbItem() As CbItem
+            Get
+                Return _Item
+            End Get
+            Set(value As CbItem)
+                _Item = value
+            End Set
+        End Property
+    End Class
+
+    Class Layer
+
+        Public Fields As New Dictionary(Of String, String)
+
+        Sub New()
+
+        End Sub
+
+    End Class
+
+    Public Function GetLayerByName(ByVal myLayerName As String, Optional ByVal runSilent As Boolean = False) As IFeatureLayer
+        Dim myLayer As IFeatureLayer = Nothing
+        Dim pUID As New UIDClass
+        pUID.Value = "{E156D7E5-22AF-11D3-9F99-00C04F6BC78E}" 'IGeoFeatureLayer IID
+        Dim pEnumLayer As IEnumLayer
+        pEnumLayer = myDoc.FocusMap.Layers(pUID, True)
+        pEnumLayer.Reset()
+        Dim pFeatureLayer As IFeatureLayer
+        pFeatureLayer = pEnumLayer.Next
+
+        Do Until (pFeatureLayer Is Nothing)
+            If pFeatureLayer.Name = myLayerName Then
+                myLayer = pFeatureLayer
+                Exit Do
+            End If
+            pFeatureLayer = pEnumLayer.Next
+        Loop
+
+        If myLayer Is Nothing Then
+            If Not runSilent Then
+                Me.Debug("Could not find layer '" & myLayerName & "'")
+            End If
+            Return Nothing
+        Else
+            Return myLayer
+        End If
+    End Function
+
+    Public Class ArcMapWindow
+
+        Implements System.Windows.Forms.IWin32Window
+        Private m_app As ESRI.ArcGIS.Framework.IApplication
+
+        Public Sub New(ByVal application As ESRI.ArcGIS.Framework.IApplication)
+            m_app = application
+        End Sub
+
+        Public ReadOnly Property Handle() As System.IntPtr Implements System.Windows.Forms.IWin32Window.Handle
+            Get
+                Return New IntPtr(m_app.hWnd)
+            End Get
+        End Property
+
+    End Class
+
+    Public Sub InsertFeaturesUsingCursor(ByVal featureLayerName As String, ByVal geometryList As List(Of IGeometry), ByVal fieldName As String, ByVal valueList As List(Of String))
+        Dim myfl As IFeatureLayer = Me.FindLayerByName(featureLayerName)
+        Dim myfc As IFeatureClass = myfl.FeatureClass
+
+        Dim featureBuffer As IFeatureBuffer = myfc.CreateFeatureBuffer()
+        Dim insertCursor As IFeatureCursor = myfc.Insert(True)
+
+        Dim typeFieldIndex As Integer = myfc.FindField(fieldName)
+        Dim i As Integer = 0
+        Dim iZA As ESRI.ArcGIS.Geometry.IZAware
+        For Each geometry As IGeometry In geometryList
+            iZA = geometry
+            iZA.ZAware = False
+            featureBuffer.Value(typeFieldIndex) = valueList.Item(i)
+            featureBuffer.Shape = geometry
+            insertCursor.InsertFeature(featureBuffer)
+            i = i + 1
+        Next
+        insertCursor.Flush()
+
+        Me.Release(featureBuffer)
+        Me.Release(insertCursor)
+    End Sub
+
+    Public Function GetSelectionExtent(ByVal pFeatureCursor As IFeatureCursor) As IPolygon
+        Dim myEnvelope As IEnvelope
+        Dim myFeature As IFeature = pFeatureCursor.NextFeature
+        If myFeature Is Nothing Then
+            Me.Debug("No selected features")
+            Return Nothing
+        End If
+        myEnvelope = myFeature.Shape.Envelope
+        Do Until myFeature Is Nothing
+            myEnvelope.Union(myFeature.Shape.Envelope)
+            myFeature = pFeatureCursor.NextFeature
+        Loop
+        Me.Release(pFeatureCursor)
+
+        Dim myPolygon As IPolygon = New Polygon
+        Dim myPointCollection As IPointCollection = myPolygon
+        myPointCollection.AddPoint(myEnvelope.UpperLeft)
+        myPointCollection.AddPoint(myEnvelope.UpperRight)
+        myPointCollection.AddPoint(myEnvelope.LowerRight)
+        myPointCollection.AddPoint(myEnvelope.LowerLeft)
+        myPolygon.Close()
+        Return myPolygon
+    End Function
+
+    Public Class HtmlString
+        Dim text As New StringBuilder
+        Sub New()
+
+        End Sub
+
+        Function GetText() As String
+            Return "<html><body>" & Me.text.ToString & "</body></html>"
+        End Function
+
+        Public Sub addTag(ByVal tagName As String, ByVal tagValue As String)
+            Me.text.Append("<" & tagName & ">" & tagValue & "</" & tagName & ">")
+        End Sub
+
+    End Class
+
+    Public Sub InsertFeaturesUsingCursor2(ByVal featureLayerName As String, ByVal geometryList As List(Of IGeometry), ByVal fieldNames As List(Of String), ByVal valueList As List(Of List(Of String)), Optional ByVal zAware As Boolean = False)
+        Dim myFeatureLayer As IFeatureLayer = Me.FindLayerByName(featureLayerName)
+        Dim myFeatureClass As IFeatureClass = myFeatureLayer.FeatureClass
+        Dim featureBuffer As IFeatureBuffer = myFeatureClass.CreateFeatureBuffer()
+        Dim insertCursor As IFeatureCursor = myFeatureClass.Insert(True)
+        Dim myFields As New List(Of Integer)
+        For Each fieldName As String In fieldNames
+            myFields.Add(myFeatureClass.FindField(fieldName))
+        Next
+
+        Dim i As Integer = 0
+        Dim iZA As ESRI.ArcGIS.Geometry.IZAware
+        For Each geometry As IGeometry In geometryList
+            iZA = geometry
+            iZA.ZAware = zAware
+            Dim j As Integer = 0
+            For Each myField As Integer In myFields
+                featureBuffer.Value(myField) = valueList.Item(i).Item(j)
+                j = j + 1
+            Next
+            featureBuffer.Shape = geometry
+            insertCursor.InsertFeature(featureBuffer)
+            i = i + 1
+        Next
+        insertCursor.Flush()
+        Me.Release(featureBuffer)
+        Me.Release(insertCursor)
+    End Sub
+
+    Public Function SqlEscape(ByVal pString As String) As String
+        Return pString.Replace("'", "''")
+
+    End Function
+
+    Public Function GetPointFromMouse(ByVal arg As Object) As IPoint
+        Dim myPoint As IPoint = New Point
+        myPoint.X = arg.x
+        myPoint.Y = arg.y
+        myPoint = Me.ScreenToMapCoord(myPoint, Me.myDoc.ActiveView)
+        Return myPoint
+    End Function
+
+    Public Function FindLayerByName(ByVal featureLayerName As String, Optional ByVal silent As Boolean = False) As IFeatureLayer
+        Dim myLayer As IFeatureLayer = Nothing
+        Me.myDoc = My.ArcMap.Document
+        Dim pUID As New UIDClass
+        pUID.Value = "{E156D7E5-22AF-11D3-9F99-00C04F6BC78E}" 'IGeoFeatureLayer IID
+        Dim pEnumLayer As IEnumLayer
+        pEnumLayer = Me.myDoc.FocusMap.Layers(pUID, True)
+        pEnumLayer.Reset()
+        Dim pFeatureLayer As IFeatureLayer
+        pFeatureLayer = pEnumLayer.Next
+        Do Until (pFeatureLayer Is Nothing)
+            If pFeatureLayer.Name = featureLayerName Then
+                myLayer = pFeatureLayer
+                Exit Do
+            End If
+            pFeatureLayer = pEnumLayer.Next
+        Loop
+        If myLayer Is Nothing Then
+            If Not silent Then
+                Me.Debug("Could not find layer '" & featureLayerName & "'")
+            End If
+            Return Nothing
+        Else
+            Return myLayer
+        End If
+    End Function
+
+    Public Function ScreenToMapCoord(ByVal screenPoint As ESRI.ArcGIS.Geometry.IPoint, ByVal activeView As ESRI.ArcGIS.Carto.IActiveView) As ESRI.ArcGIS.Geometry.IPoint
+
+        If screenPoint Is Nothing OrElse screenPoint.IsEmpty OrElse activeView Is Nothing Then
+            Return Nothing
+        End If
+
+        Dim screenDisplay As ESRI.ArcGIS.Display.IScreenDisplay = activeView.ScreenDisplay
+        Dim displayTransformation As ESRI.ArcGIS.Display.IDisplayTransformation = screenDisplay.DisplayTransformation
+
+        Return displayTransformation.ToMapPoint(CInt(screenPoint.X), CInt(screenPoint.Y))
+
+    End Function
+
+    Public Function PixelsToMapUnits(ByVal numberOfPixels As Double) As Double
+        Dim realWorldDisplayExtent As Double
+        Dim pixelExtent As Long
+        Dim sizeOfOnePixel As Double
+        Dim pDT As IDisplayTransformation
+        Dim deviceRECT As New ESRI.ArcGIS.esriSystem.tagRECT()
+        Dim pEnv As IEnvelope
+        Dim pActiveView As IActiveView
+        pActiveView = Me.myDoc.ActiveView
+        pDT = pActiveView.ScreenDisplay.DisplayTransformation
+        deviceRECT = pDT.DeviceFrame
+        pixelExtent = deviceRECT.right - deviceRECT.left
+        pEnv = pDT.VisibleBounds
+        realWorldDisplayExtent = pEnv.Width
+        sizeOfOnePixel = realWorldDisplayExtent / pixelExtent
+        PixelsToMapUnits = numberOfPixels * sizeOfOnePixel
+    End Function
+
+    Public Function FindTableByName(ByVal tableName As String, Optional ByVal silent As Boolean = False) As ITable
+        Dim pStandAloneTableCollection As IStandaloneTableCollection
+        Dim pStandAloneTable As IStandaloneTable
+        Dim pTable As ITable
+        Dim pDataset As IDataset
+        Dim myTable As ITable = Nothing
+        Dim lnt As Integer
+        pStandAloneTableCollection = My.ArcMap.Document.FocusMap
+        For lnt = 0 To pStandAloneTableCollection.StandaloneTableCount - 1
+            pStandAloneTable = pStandAloneTableCollection.StandaloneTable(lnt)
+            pTable = pStandAloneTable.Table
+            'Alok check null to avoid the error.
+            If Not pTable Is Nothing Then
+                pDataset = pTable
+                If pDataset.Name = tableName Then
+                    myTable = pTable
+                End If
+            End If
+        Next lnt
+        If myTable Is Nothing Then
+            If Not silent Then
+                Me.Debug("Could not find table '" & tableName & "'")
+            End If
+            Return Nothing
+        Else
+            Return myTable
+        End If
+    End Function
+
+    Public Class myKeyValue
+        Public myTable As New DataTable()
+        Dim myRow As DataRow
+        Dim myField
+
+        Sub New()
+            Me.myTable.Columns.Add("key")
+            Me.myTable.Columns.Add("value")
+        End Sub
+
+        Function addKeyValue(ByVal myKey As String, ByVal myValue As String) As Boolean
+            Me.myRow = Me.myTable.NewRow()
+            Me.myRow.Item("key") = myKey
+            Me.myRow.Item("value") = myValue
+            Me.myTable.Rows.Add(Me.myRow)
+            Return True
+        End Function
+
+    End Class
+
+    ''' <summary>
+    ''' Utility class to hold key information from selected street segments
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public Class myStreetSegments
+        Public myTable As New DataTable()
+        Dim myRow As DataRow
+
+        Sub New()
+            Me.myTable.Columns.Add("segmentId")
+            Me.myTable.Columns.Add("source")
+            Me.myTable.Columns.Add("streetId")
+        End Sub
+
+        Function addStreet(ByVal pSegmentId As String, ByVal pSource As String) As Boolean
+            Try
+                Me.myRow = Me.myTable.NewRow()
+                Me.myRow.Item("segmentId") = pSegmentId
+                Me.myRow.Item("source") = pSource
+                Me.myTable.Rows.Add(Me.myRow)
+                Return True
+            Catch ex As Exception
+                Return False
+            End Try
+        End Function
+
+        Function addStreet(ByVal pSegmentId As String, ByVal pSource As String, ByVal pStreetId As String) As Boolean
+            Try
+                Me.myRow = Me.myTable.NewRow()
+                Me.myRow.Item("segmentId") = pSegmentId
+                Me.myRow.Item("source") = pSource
+                Me.myRow.Item("streetId") = pStreetId
+                Me.myTable.Rows.Add(Me.myRow)
+                Return True
+            Catch ex As Exception
+                Return False
+            End Try
+        End Function
+
+    End Class '
+
+    Public Function PointBuffer(ByVal myPoint As IPoint, ByVal bufferDistance As Double, Optional ByVal bufferUnits As String = "pixels") As IPolygon
+
+        Dim myTopoOp As ITopologicalOperator
+        Dim myPolygon As IPolygon
+        If bufferUnits = "pixels" Then
+            bufferDistance = Me.PixelsToMapUnits(bufferDistance)
+        End If
+        myTopoOp = myPoint
+        myPolygon = myTopoOp.Buffer(bufferDistance)
+        Return myPolygon
+
+    End Function
+
+    Public Function PerformAttributeQuery(ByVal tableName As String, ByVal myWhereClause As System.String, Optional ByVal cursorType As String = "search") As ICursor
+
+        Dim myTable As ITable = FindTableByName(tableName)
+        If Not myTable Is Nothing Then
+            Dim queryFilter As IQueryFilter = New QueryFilterClass()
+            queryFilter.WhereClause = myWhereClause ' create the where clause statement
+            Dim pCursor As ICursor
+            If cursorType = "update" Then
+                'Return update cursor
+                pCursor = myTable.Update(queryFilter, False)
+            Else
+                'Return search cursor
+                pCursor = myTable.Search(queryFilter, False)
+            End If
+            Return pCursor
+        Else
+            Return Nothing
+        End If
+
+    End Function
+
+    Public Function GetStreetID(ByVal myScreenPoint As IPoint) As Long
+        Dim myPoint As IPoint = New Point
+        myPoint.X = myScreenPoint.X
+        myPoint.Y = myScreenPoint.Y
+        myPoint = Me.ScreenToMapCoord(myPoint, My.ArcMap.Document.ActiveView)
+        Dim myLayer As IFeatureLayer = Me.FindLayerByName("StreetSegment")
+        Dim myFeature As IFeature = Me.GetFeatureByPointSingle(5, myPoint, myLayer, My.ArcMap.Document.ActiveView)
+        If myFeature Is Nothing Then
+            Me.Debug("No street found")
+            Return -1
+        End If
+        Dim myField As Integer = myFeature.Fields.FindField("streetId")
+        Dim myRow As IRow = myFeature.Table.GetRow(myFeature.OID)
+        Dim myValue As Long
+        If IsDBNull(myRow.Value(myField)) Then
+            Me.Debug("The street id of the street segment is not set")
+            myValue = -1
+        Else
+            myValue = myRow.Value(myField)
+        End If
+        Return myValue
+    End Function
+
+    Public Function GetAddressUnitID(ByVal pPoint As IPoint) As Long
+        Dim mLayer As IFeatureLayer = Me.FindLayerByName("AdrUnitNumber")
+        Dim mFeature As IFeature = Me.GetFeatureByPointSingle(5, pPoint, mLayer, My.ArcMap.Document.ActiveView)
+        If mFeature Is Nothing Then
+            'Me.Debug("No address unit found")
+            Return Nothing
+        End If
+        Dim mField As Integer = mFeature.Fields.FindField("OBJECTID")
+        Dim mRow As IRow = mFeature.Table.GetRow(mFeature.OID)
+        Dim mValue As Long = mRow.Value(mField)
+        Return mValue
+    End Function
+
+    Public Function PerformSpatialQuery(ByVal pFeatureClass As IFeatureClass, ByVal pSearchGeometry As IGeometry, ByVal pSpatialRelation As esriSpatialRelEnum, ByVal pWhereClause As String, Optional ByVal pCursorType As String = "search") As IFeatureCursor
+
+        Dim mySpatialFilter As ESRI.ArcGIS.Geodatabase.ISpatialFilter = New ESRI.ArcGIS.Geodatabase.SpatialFilterClass()
+
+        mySpatialFilter.Geometry = pSearchGeometry
+
+        Dim myShapeFieldName As System.String = pFeatureClass.ShapeFieldName
+        mySpatialFilter.GeometryField = myShapeFieldName
+
+        mySpatialFilter.SpatialRel = pSpatialRelation
+
+        mySpatialFilter.WhereClause = pWhereClause
+
+        Dim myQueryFilter As ESRI.ArcGIS.Geodatabase.IQueryFilter = New ESRI.ArcGIS.Geodatabase.QueryFilterClass()
+        myQueryFilter = CType(mySpatialFilter, ESRI.ArcGIS.Geodatabase.IQueryFilter)
+        Dim myFeatureCursor As IFeatureCursor
+
+        If pCursorType = "update" Then
+            myFeatureCursor = pFeatureClass.Update(myQueryFilter, False)
+        Else
+            myFeatureCursor = pFeatureClass.Search(myQueryFilter, False)
+        End If
+
+        Return myFeatureCursor
+
+    End Function
+
+    Public Function StartEditSession(ByVal pFeatureLayer As IFeatureLayer) As IWorkspaceEdit
+        Dim pGeoDataset As IGeoDataset
+        Dim pDataset As IDataset
+        Dim pWorkspace As IWorkspace
+        Dim pWorkspaceEdit As IWorkspaceEdit
+        pGeoDataset = pFeatureLayer
+        pDataset = pGeoDataset
+        pWorkspace = pDataset.Workspace
+        pWorkspaceEdit = pWorkspace
+        pWorkspaceEdit.StartEditing(False)
+        pWorkspaceEdit.StartEditOperation()
+        Return pWorkspaceEdit
+    End Function
+
+    Public Function StopEditSession(ByVal myWorkspace As IWorkspaceEdit) As Boolean
+        myWorkspace.StopEditOperation()
+        myWorkspace.StopEditing(True)
+    End Function
+
+    Public Function UpdateSingleFieldQuery(ByVal pTableorLayerName As String, ByVal pFieldName As String, ByVal pUpdateValue As Object, Optional ByVal pWhereClause As String = Nothing, Optional ByVal pStartEditSession As Boolean = False) As Boolean
+        Try
+            Dim myTable As ITable = Me.FindTableByName(pTableorLayerName, True)
+            If myTable Is Nothing Then
+                myTable = Me.FindLayerByName(pTableorLayerName, True)
+            End If
+            If myTable Is Nothing Then
+                Me.Debug("No Table or FeatureLayer named '" & pTableorLayerName & "' found.")
+                Return Nothing
+            End If
+
+            Dim pWorkspaceEdit As IWorkspaceEdit = Nothing
+            If pStartEditSession = True Then
+                pWorkspaceEdit = Me.StartEditSession(myTable)
+            End If
+
+            Dim pCursor As ICursor = Nothing
+
+            If pWhereClause = Nothing Then 'If no where clause specified, use existing selection
+                Dim pSelection As IFeatureSelection = myTable
+                Dim pSelectionSet As ISelectionSet2 = pSelection.SelectionSet
+                pSelectionSet.Update(Nothing, True, pCursor)
+            Else 'create IQueryFilter from pWhereClause
+                Dim pQueryFilter As IQueryFilter = New QueryFilterClass()
+                pQueryFilter.WhereClause = pWhereClause
+                pCursor = myTable.Update(pQueryFilter, False)
+            End If
+
+            If pCursor Is Nothing Then
+                Me.Debug("No rows in cursor")
+                Return Nothing
+            End If
+
+            Dim pRow As IRow = pCursor.NextRow
+            Do Until pRow Is Nothing
+                pRow = Me.SetRowValue(pRow, pFieldName, pUpdateValue)
+                pCursor.UpdateRow(pRow)
+                pRow = pCursor.NextRow
+            Loop
+            pCursor.Flush()
+            Me.Release(pCursor)
+
+            If pStartEditSession = True Then
+                Me.StopEditSession(pWorkspaceEdit)
+            End If
+
+            Return True
+        Catch ex As Exception
+            MsgBox(ex.Message)
+            Return False
+        End Try
+
+    End Function
+
+    Public Function GetSingleFieldFromQuery(ByVal pTableOrLayerName As String, ByVal pFieldName As String, ByVal pWhereClause As String) As Object
+        Dim myTable As ITable = Me.FindTableByName(pTableOrLayerName, True)
+        If myTable Is Nothing Then
+            myTable = Me.FindLayerByName(pTableOrLayerName, True)
+        End If
+        If myTable Is Nothing Then
+            Me.Debug("No Table or FeatureLayer named '" & pTableOrLayerName & "' found.")
+            Return Nothing
+        End If
+
+        Dim myCursor As ICursor
+        Dim myQueryFilter As IQueryFilter = New QueryFilterClass()
+        myQueryFilter.WhereClause = pWhereClause ' create the where clause statement
+        myCursor = myTable.Search(myQueryFilter, False)
+        If myCursor Is Nothing Then
+            Me.Debug("No rows in cursor")
+            Return Nothing
+        End If
+
+        Dim myField As Integer = myCursor.FindField(pFieldName)
+        Dim myValue As String = ""
+        Dim myRow As IRow = myCursor.NextRow
+        Do Until myRow Is Nothing
+            myValue = myRow.Value(myField)
+            myRow = myCursor.NextRow
+        Loop
+        Me.Release(myCursor)
+        Return myValue
+    End Function
+
+    Public Function GetRowValueAsString(ByVal pRow As IRow, ByVal pFieldName As String) As String
+        Dim myValue As Object = GetRowValue(pRow, pFieldName)
+        If myValue Is Nothing Then
+            Return ""
+        Else
+            Return myValue.ToString
+        End If
+    End Function
+
+    Public Function GetRowValue(ByVal pRow As IRow, ByVal pFieldName As String) As Object
+        Dim myFieldID As Integer = pRow.Fields.FindField(pFieldName)
+        If IsNumeric(myFieldID) Then
+            Return pRow.Value(myFieldID)
+        Else
+            Return Nothing
+        End If
+    End Function
+
+    Public Function GetFeatureValue(ByVal pFeature As IFeature, ByVal pFieldName As String) As Object
+        Try
+            Dim myFieldID As Integer = pFeature.Fields.FindField(pFieldName)
+            If IsNumeric(myFieldID) Then
+                Return pFeature.Value(myFieldID)
+            Else
+                Return Nothing
+            End If
+        Catch ex As Exception
+            Debug(ex.Message)
+            Return Nothing
+        End Try
+    End Function
+
+    Public Function GetFeatureValueAsString(ByVal pFeature As IFeature, ByVal pFieldName As String) As String
+        Try
+            Dim myFieldID As Integer = pFeature.Fields.FindField(pFieldName)
+            If IsNumeric(myFieldID) Then
+                Return pFeature.Value(myFieldID).ToString
+            Else
+                Return Nothing
+            End If
+        Catch ex As Exception
+            Debug(ex.Message)
+            Return Nothing
+        End Try
+    End Function
+
+    Public Function SetRowValue(ByVal pRow As IRow, ByVal pFieldName As String, ByVal pValue As Object) As IRow
+        Dim myFieldID As Integer = pRow.Fields.FindField(pFieldName)
+        If IsNumeric(myFieldID) Then
+            pRow.Value(myFieldID) = pValue
+            Return pRow
+        Else
+            Return Nothing
+        End If
+    End Function
+
+    Function SetRowBufferValue(ByRef pRowBuffer As IRowBuffer, ByVal pFieldName As String, ByVal pFieldValue As Object) As Boolean
+        Try
+            Dim mFieldIndex As Integer = pRowBuffer.Fields.FindField(pFieldName)
+            If mFieldIndex = Nothing Then
+                Return False
+            End If
+            pRowBuffer.Value(mFieldIndex) = pFieldValue
+            Return True
+        Catch ex As Exception
+            Me.Debug(ex.Message)
+            Return False
+        End Try
+
+    End Function
+
+
+    Function SetFeatureValue(ByVal pFeature As IFeature, ByVal pFieldName As String, ByVal pValue As Object) As IFeature
+        Dim myFieldID As Integer = pFeature.Fields.FindField(pFieldName)
+        If IsNumeric(myFieldID) Then
+            pFeature.Value(myFieldID) = pValue
+            Return pFeature
+        Else
+            Return Nothing
+        End If
+    End Function
+
+    Function GetComboValuesSingle(ByVal pFeatureLayerName As String, ByVal pFieldName As String, Optional ByVal pWhereClause As String = Nothing) As DataTable
+        Dim myTable As New DataTable
+        myTable.Columns.Add("key")
+
+        Dim myFeatureLayer As IFeatureLayer = Me.FindLayerByName(pFeatureLayerName)
+        If myFeatureLayer Is Nothing Then
+            Return Nothing
+        End If
+        Dim myQueryFilter As IQueryFilter = Nothing
+        Dim myFeatureCursor As IFeatureCursor
+        If Not pWhereClause Is Nothing Then
+            myQueryFilter = New QueryFilterClass()
+            myQueryFilter.WhereClause = pWhereClause ' create the where clause statement
+            myFeatureCursor = myFeatureLayer.FeatureClass.Search(myQueryFilter, False)
+        Else
+            myFeatureCursor = myFeatureLayer.FeatureClass.Search(Nothing, False)
+        End If
+
+        Dim myDnameEnglishField As Integer = myFeatureCursor.FindField(pFieldName)
+
+        Dim myFeature As IFeature = myFeatureCursor.NextFeature
+        Do Until myFeature Is Nothing
+            Dim myRow As DataRow = myTable.NewRow
+            myRow.Item("key") = myFeature.Value(myDnameEnglishField)
+            myTable.Rows.Add(myRow)
+            myFeature = myFeatureCursor.NextFeature
+        Loop
+        Me.Release(myFeatureCursor)
+
+        Dim myDataView As DataView = myTable.DefaultView
+        myDataView.Sort = "key"
+        myTable = myDataView.ToTable(True, "key")
+        Return myTable
+    End Function
+
+    Function GetComboValues(ByVal tableName As String, ByVal idColumnName As String, ByVal valueColumnName As String, Optional ByVal valueColumnName2 As String = "") As DataTable
+        Dim pTable As ITable
+        Dim pSortedCursor As ICursor
+        Dim fld1 As Long
+        Dim fld2 As Long
+        Dim fld3 As Long = Nothing
+        Dim pTableSort As ITableSort
+        Dim pTrackCancel As ITrackCancel
+        Dim pRowBuff As IRowBuffer
+        Dim myComboValues As myKeyValue = New myKeyValue
+        Dim myValue As String = ""
+
+        pTable = Me.FindTableByName(tableName, True)
+        If pTable Is Nothing Then
+            pTable = Me.FindLayerByName(tableName, True)
+        End If
+
+        If Not pTable Is Nothing Then
+            fld1 = pTable.FindField(idColumnName)
+            fld2 = pTable.FindField(valueColumnName)
+            If (Not valueColumnName2 = "") Then
+                fld3 = pTable.FindField(valueColumnName2)
+            End If
+            pTableSort = New TableSort
+            pTrackCancel = New CancelTracker
+            pTableSort.Table = pTable
+            pTableSort.Fields = valueColumnName
+            pTableSort.Ascending(valueColumnName) = True
+            pTableSort.Sort(pTrackCancel)
+            pSortedCursor = pTableSort.Rows
+            pRowBuff = pSortedCursor.NextRow
+            Dim i3 As Long
+            i3 = 0
+            Do While Not pRowBuff Is Nothing
+                If Not IsDBNull(pRowBuff.Value(fld1)) And Not IsDBNull(pRowBuff.Value(fld2)) Then
+                    If Not IsDBNull(pRowBuff.Value(fld3)) Then
+                        myValue = CStr(pRowBuff.Value(fld2)) & " " & CStr(pRowBuff.Value(fld3))
+                    Else
+                        myValue = CStr(pRowBuff.Value(fld2))
+                    End If
+                    myComboValues.addKeyValue(myValue, CStr(pRowBuff.Value(fld1)))
+                End If
+                pRowBuff = pSortedCursor.NextRow
+            Loop
+            Return myComboValues.myTable
+        Else
+            Return Nothing
+        End If
+
+    End Function
+
+    Function GetComboValuesQuery(ByVal tableName As String, ByVal idColumnName As String, ByVal valueColumnName As String, ByVal myWhereClause As String, Optional ByVal valueColumnName2 As String = "") As DataTable
+        Dim pTable As ITable
+        Dim pSortedCursor As ICursor
+        Dim fld1 As Long
+        Dim fld2 As Long
+        Dim fld3 As Long = Nothing
+        Dim pTableSort As ITableSort
+        Dim pTrackCancel As ITrackCancel
+        Dim pRowBuff As IRowBuffer
+        Dim myComboValues As myKeyValue = New myKeyValue
+        Dim myValue As String = ""
+
+        pTable = Me.FindTableByName(tableName, True)
+        If pTable Is Nothing Then
+            pTable = Me.FindLayerByName(tableName, True)
+        End If
+
+        If Not pTable Is Nothing Then
+
+            fld1 = pTable.FindField(idColumnName)
+            fld2 = pTable.FindField(valueColumnName)
+            If (Not valueColumnName2 = "") Then
+                fld3 = pTable.FindField(valueColumnName2)
+            End If
+
+            Dim myQueryFilter As IQueryFilter = New QueryFilterClass()
+            myQueryFilter.WhereClause = myWhereClause ' create the where clause statement
+            pTableSort = New TableSort
+            pTrackCancel = New CancelTracker
+            pTableSort.Table = pTable
+            pTableSort.QueryFilter = myQueryFilter
+            pTableSort.Fields = valueColumnName
+            pTableSort.Ascending(valueColumnName) = True
+            pTableSort.Sort(pTrackCancel)
+            pSortedCursor = pTableSort.Rows
+            pRowBuff = pSortedCursor.NextRow
+            Dim i3 As Long
+            i3 = 0
+            Do While Not pRowBuff Is Nothing
+                If Not IsDBNull(pRowBuff.Value(fld1)) And Not IsDBNull(pRowBuff.Value(fld2)) Then
+                    If Not IsDBNull(pRowBuff.Value(fld3)) Then
+                        myValue = CStr(pRowBuff.Value(fld2)) & " (" & CStr(pRowBuff.Value(fld3) & ")")
+                    Else
+                        myValue = CStr(pRowBuff.Value(fld2))
+                    End If
+                    myComboValues.addKeyValue(myValue, CStr(pRowBuff.Value(fld1)))
+                End If
+                pRowBuff = pSortedCursor.NextRow
+            Loop
+            Return myComboValues.myTable
+        Else
+            Return Nothing
+        End If
+
+    End Function
+
+    Sub DrawGraphicPoint(ByVal pPoint As IPoint, ByVal pSymbolSize As Double)
+        Dim mScreenDisplay As IScreenDisplay = Me.myDoc.ActiveView.ScreenDisplay
+        mScreenDisplay.StartDrawing(mScreenDisplay.hDC, CShort(ESRI.ArcGIS.Display.esriScreenCache.esriNoScreenCache))
+        Dim mSimpleMarkerSymbol As ISimpleMarkerSymbol = New SimpleMarkerSymbolClass
+        mSimpleMarkerSymbol.Size = pSymbolSize
+        Dim mSymbol As ISymbol = TryCast(mSimpleMarkerSymbol, ISymbol) ' Dynamic cast.
+        mScreenDisplay.SetSymbol(mSymbol)
+        Dim mDisplayTransformation As IDisplayTransformation = mScreenDisplay.DisplayTransformation
+        mScreenDisplay.DrawPoint(pPoint)
+        mScreenDisplay.FinishDrawing()
+    End Sub
+
+    Public Sub UpdateTable(ByVal myTableName As String, ByVal myWhereClause As String, ByVal myUpdateField As String, ByVal myUpdateValue As String)
+        Dim myTable As ITable = FindTableByName(myTableName)
+        If myTable Is Nothing Then
+            Dim myFeature As IFeatureLayer = FindLayerByName(myTableName)
+            myTable = myFeature
+        End If
+        If myTable Is Nothing Then
+            MsgBox("Specified table does not exist")
+            Exit Sub
+        End If
+        Dim queryFilter As IQueryFilter = New QueryFilterClass()
+        queryFilter.WhereClause = myWhereClause
+        queryFilter.SubFields = myUpdateField
+        Dim updateCursor As ICursor = myTable.Update(queryFilter, False)
+        Dim typeFieldIndex As Integer = myTable.FindField(myUpdateField)
+        Try
+            Dim myRow As IRow = updateCursor.NextRow()
+            Do While Not myRow Is Nothing
+                myRow.Value(typeFieldIndex) = myUpdateValue
+                updateCursor.UpdateRow(myRow)
+                myRow = updateCursor.NextRow()
+            Loop
+        Catch comExc As COMException
+            ' Handle any errors that might occur on NextFeature().
+        End Try
+
+        ' If the cursor is no longer needed, release it.
+        Me.Release(updateCursor)
+
+    End Sub
+
+    Public Sub UpdateFeatureLayer(ByVal myLayerName As String, ByVal myWhereClause As String, ByVal myUpdateField As String, ByVal myUpdateValue As String)
+        Dim myFeatureLayer As IFeatureLayer = FindLayerByName(myLayerName)
+        If myFeatureLayer Is Nothing Then
+            Debug("Could not find a layer named " & myLayerName)
+            Exit Sub
+        End If
+        Dim queryFilter As IQueryFilter = New QueryFilterClass()
+        queryFilter.WhereClause = myWhereClause
+        queryFilter.SubFields = myUpdateField
+        Dim updateCursor As IFeatureCursor = myFeatureLayer.FeatureClass.Update(queryFilter, False)
+        If updateCursor Is Nothing Then
+            Debug("An error occured searching for " & myWhereClause & " in layer " & myLayerName)
+            Exit Sub
+        End If
+        Dim typeFieldIndex As Integer = myFeatureLayer.FeatureClass.FindField(myUpdateField)
+        Try
+            Dim myFeature As IFeature = updateCursor.NextFeature()
+            Do While Not myFeature Is Nothing
+                myFeature.Value(typeFieldIndex) = myUpdateValue
+                updateCursor.UpdateFeature(myFeature)
+                myFeature = updateCursor.NextFeature()
+            Loop
+        Catch comExc As COMException
+            ' Handle any errors that might occur on NextFeature().
+            Debug("An error occured while updating the field " & myUpdateField)
+            Exit Sub
+        End Try
+
+        ' If the cursor is no longer needed, release it.
+        Me.Release(updateCursor)
+
+    End Sub
+
+    Public Sub Release(ByVal myObj As Object)
+        Marshal.ReleaseComObject(myObj)
+    End Sub
+
+    Public Sub Debug(ByVal debugMessage As String)
+        MsgBox(debugMessage, MsgBoxStyle.Exclamation, "Error")
+    End Sub
+
+    Function InsertAddressUnitNumber(ByRef pointGeometry As IPoint, ByVal addressUnitNumber As String) As Boolean
+        'Get address unit layer
+        Dim mAdrLayer = Me.FindLayerByName("AdrUnitNumber")
+        Dim mWorkspaceEdit As IWorkspaceEdit
+        Dim mGeometries As New List(Of IGeometry)
+        'Iterate through selection
+        If Not mAdrLayer Is Nothing Then
+
+            'Start an editing session
+            mWorkspaceEdit = Me.StartEditSession(mAdrLayer)
+            mGeometries.Add(pointGeometry)
+
+            Dim mInsertFields As New List(Of String)
+            mInsertFields.Add("ADDRESSNUMBER")
+            mInsertFields.Add("FK_STREET_ID")
+            mInsertFields.Add("FK_ADRSTATUS_ID")
+            mInsertFields.Add("FK_ADRTYPE_ID")
+
+            'Populate attributes
+            Dim mAttributeTable As New List(Of List(Of String))
+            Dim myRow As New List(Of String)
+            myRow.Add(Me.mDAUW.GetAddressNumber)
+            myRow.Add(Me.mDAUW.GetStreetID)
+            myRow.Add(Me.mDAUW.GetAddressUnitStatus)
+            myRow.Add(Me.mDAUW.GetAddressUnitType)
+
+            mAttributeTable.Add(myRow)
+            Me.InsertFeaturesUsingCursor2("AdrUnitNumber", mGeometries, mInsertFields, mAttributeTable)
+
+            Me.StopEditSession(mWorkspaceEdit)
+
+            'Refesh the view to display the selection
+            Me.myDoc.ActiveView.Refresh()
+        End If
+
+    End Function
+
+    Function InsertIntersection(ByRef pointGeometry As IPoint, ByVal addressUnitNumber As String) As Boolean
+        'Get address unit layer
+        Dim mAdrLayer = Me.FindLayerByName("AdrUnitNumber")
+        Dim mWorkspaceEdit As IWorkspaceEdit
+        Dim mGeometries As New List(Of IGeometry)
+        'Iterate through selection
+        If Not mAdrLayer Is Nothing Then
+
+            'Start an editing session
+            mWorkspaceEdit = Me.StartEditSession(mAdrLayer)
+            mGeometries.Add(pointGeometry)
+
+            Dim mInsertFields As New List(Of String)
+            mInsertFields.Add("ADDRESSNUMBER")
+            mInsertFields.Add("FK_STREET_ID")
+            mInsertFields.Add("FK_ADRSTATUS_ID")
+            mInsertFields.Add("FK_ADRTYPE_ID")
+
+            'Populate attributes
+            Dim mAttributeTable As New List(Of List(Of String))
+            Dim myRow As New List(Of String)
+            myRow.Add(Me.mDAUW.GetAddressNumber)
+            myRow.Add(Me.mDAUW.GetStreetID)
+            myRow.Add(Me.mDAUW.GetAddressUnitStatus)
+            myRow.Add(Me.mDAUW.GetAddressUnitType)
+
+            mAttributeTable.Add(myRow)
+            Me.InsertFeaturesUsingCursor2("AdrUnitNumber", mGeometries, mInsertFields, mAttributeTable)
+
+            Me.StopEditSession(mWorkspaceEdit)
+
+            'Refesh the view to display the selection
+            Me.myDoc.ActiveView.Refresh()
+        End If
+
+    End Function
+
+    Function InsertStartingPointOfStreet(ByVal pointGeometry As IPoint, ByVal streetID As Long) As Boolean
+        'Get address unit layer
+        Dim mAdrLayer = Me.FindLayerByName("StartingPoint")
+        Dim mWorkspaceEdit As IWorkspaceEdit
+        Dim mGeometries As New List(Of IGeometry)
+        'Iterate through selection
+        If Not mAdrLayer Is Nothing Then
+
+            'Start an editing session
+            mWorkspaceEdit = Me.StartEditSession(mAdrLayer)
+            mGeometries.Add(pointGeometry)
+
+            Dim mInsertFields As New List(Of String)
+            mInsertFields.Add("FK_STREET_ID")
+
+            'Populate attributes
+            Dim mAttributeTable As New List(Of List(Of String))
+            Dim myRow As New List(Of String)
+            myRow.Add(streetID)
+
+            mAttributeTable.Add(myRow)
+            Me.InsertFeaturesUsingCursor2("StartingPoint", mGeometries, mInsertFields, mAttributeTable)
+
+            Me.StopEditSession(mWorkspaceEdit)
+
+            'Refesh the view to display the selection
+            Me.myDoc.ActiveView.Refresh()
+        End If
+    End Function
+
+    Public Function GetFeatureByPointSingle(ByVal pSearchTolerance As Double, ByVal pPoint As IPoint, ByVal pFeatureLayer As IGeoFeatureLayer, ByVal pActiveView As IActiveView) As IFeature
+
+        If pSearchTolerance < 0 OrElse pPoint Is Nothing OrElse pFeatureLayer Is Nothing OrElse pActiveView Is Nothing Then
+
+            Return Nothing
+
+        End If
+
+        Dim map As ESRI.ArcGIS.Carto.IMap = pActiveView.FocusMap
+
+        Dim myPolygon As IPolygon = Me.PointBuffer(pPoint, 5)
+
+        Dim featureClass As ESRI.ArcGIS.Geodatabase.IFeatureClass = pFeatureLayer.FeatureClass
+        Dim shapeFieldName As System.String = featureClass.ShapeFieldName
+
+        ' Create a new spatial filter and use the new envelope as the geometry    
+        Dim spatialFilter As ESRI.ArcGIS.Geodatabase.ISpatialFilter = New ESRI.ArcGIS.Geodatabase.SpatialFilterClass
+        spatialFilter.Geometry = myPolygon
+        spatialFilter.SpatialRel = ESRI.ArcGIS.Geodatabase.esriSpatialRelEnum.esriSpatialRelIntersects
+        spatialFilter.OutputSpatialReference(shapeFieldName) = map.SpatialReference
+        spatialFilter.GeometryField = shapeFieldName
+
+        ' Do the search
+        Dim featureCursor As ESRI.ArcGIS.Geodatabase.IFeatureCursor = featureClass.Search(spatialFilter, False)
+
+        ' Get the first feature
+        Dim feature As IFeature = featureCursor.NextFeature
+
+        If Not (feature Is Nothing) Then
+
+            Return feature
+
+        Else
+
+            Return Nothing
+
+        End If
+
+    End Function
+
+    Public Function ReversePolyline(ByVal myPolyline As IPolyline)
+        myPolyline.ReverseOrientation()
+        Return myPolyline
+    End Function
+
+    Public Function DeleteFromTableWhere(ByVal pTableName As String, ByVal pWhereClause As String, Optional ByVal pStartEditSession As Boolean = False) As Boolean
+        Try
+            Dim pFeatureTable As ITable = Me.FindTableByName(pTableName)
+            Dim pQueryFilter As IQueryFilter = New QueryFilterClass()
+            pQueryFilter.WhereClause = pWhereClause
+            Dim pFeatureCursor As ICursor = pFeatureTable.Update(pQueryFilter, False)
+            Dim pRow As IRow = pFeatureCursor.NextRow
+            Do Until pRow Is Nothing
+                pFeatureCursor.DeleteRow()
+                pRow = pFeatureCursor.NextRow
+            Loop
+            pFeatureCursor.Flush()
+            Me.Release(pFeatureCursor)
+            Return True
+        Catch ex As Exception
+            Me.Debug(ex.Message)
+            Return False
+        End Try
+    End Function
+
+
+    Public Sub AddGraphicToMap(ByVal map As ESRI.ArcGIS.Carto.IMap, ByVal geometry As ESRI.ArcGIS.Geometry.IGeometry, ByVal rgbColor As ESRI.ArcGIS.Display.IRgbColor, ByVal outlineRgbColor As ESRI.ArcGIS.Display.IRgbColor)
+
+        Dim graphicsContainer As ESRI.ArcGIS.Carto.IGraphicsContainer = CType(map, ESRI.ArcGIS.Carto.IGraphicsContainer) ' Explicit Cast
+        Dim element As ESRI.ArcGIS.Carto.IElement = Nothing
+
+        If (geometry.GeometryType) = ESRI.ArcGIS.Geometry.esriGeometryType.esriGeometryPoint Then
+
+            ' Marker symbols
+            Dim simpleMarkerSymbol As ESRI.ArcGIS.Display.ISimpleMarkerSymbol = New ESRI.ArcGIS.Display.SimpleMarkerSymbolClass()
+            simpleMarkerSymbol.Color = rgbColor
+            simpleMarkerSymbol.Outline = True
+            simpleMarkerSymbol.OutlineColor = outlineRgbColor
+            simpleMarkerSymbol.Size = 15
+            simpleMarkerSymbol.Style = ESRI.ArcGIS.Display.esriSimpleMarkerStyle.esriSMSCircle
+
+            Dim markerElement As ESRI.ArcGIS.Carto.IMarkerElement = New ESRI.ArcGIS.Carto.MarkerElementClass()
+            markerElement.Symbol = simpleMarkerSymbol
+            element = CType(markerElement, ESRI.ArcGIS.Carto.IElement) ' Explicit Cast
+
+        ElseIf (geometry.GeometryType) = ESRI.ArcGIS.Geometry.esriGeometryType.esriGeometryPolyline Then
+
+            '  Line elements
+            Dim simpleLineSymbol As ESRI.ArcGIS.Display.ISimpleLineSymbol = New ESRI.ArcGIS.Display.SimpleLineSymbolClass()
+            simpleLineSymbol.Color = rgbColor
+            simpleLineSymbol.Style = ESRI.ArcGIS.Display.esriSimpleLineStyle.esriSLSSolid
+            simpleLineSymbol.Width = 5
+
+            Dim lineElement As ESRI.ArcGIS.Carto.ILineElement = New ESRI.ArcGIS.Carto.LineElementClass()
+            lineElement.Symbol = simpleLineSymbol
+            element = CType(lineElement, ESRI.ArcGIS.Carto.IElement) ' Explicit Cast
+
+        ElseIf (geometry.GeometryType) = ESRI.ArcGIS.Geometry.esriGeometryType.esriGeometryPolygon Then
+
+            ' Polygon elements
+            Dim simpleFillSymbol As ESRI.ArcGIS.Display.ISimpleFillSymbol = New ESRI.ArcGIS.Display.SimpleFillSymbolClass()
+            simpleFillSymbol.Color = rgbColor
+            simpleFillSymbol.Style = ESRI.ArcGIS.Display.esriSimpleFillStyle.esriSFSForwardDiagonal
+            Dim fillShapeElement As ESRI.ArcGIS.Carto.IFillShapeElement = New ESRI.ArcGIS.Carto.PolygonElementClass()
+            fillShapeElement.Symbol = simpleFillSymbol
+            element = CType(fillShapeElement, ESRI.ArcGIS.Carto.IElement) ' Explicit Cast
+
+        End If
+
+        If Not (element Is Nothing) Then
+
+            element.Geometry = geometry
+            graphicsContainer.AddElement(element, 0)
+
+        End If
+
+    End Sub
+
+End Class

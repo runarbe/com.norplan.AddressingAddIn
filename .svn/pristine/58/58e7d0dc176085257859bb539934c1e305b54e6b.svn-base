@@ -1,0 +1,34 @@
+﻿Imports npoAddressingAddIn.Utilities
+Imports ESRI.ArcGIS.ArcMapUI
+Imports ESRI.ArcGIS.Geometry
+Imports ESRI.ArcGIS.Framework
+Imports ESRI.ArcGIS.Desktop
+Imports ESRI.ArcGIS.esriSystem
+Imports ESRI.ArcGIS.Geodatabase
+Imports ESRI.ArcGIS.DataSourcesGDB
+Imports ESRI.ArcGIS.DataSourcesFile
+Imports System.Collections
+Imports System.Runtime.InteropServices
+Imports ESRI.ArcGIS.Editor
+Imports ESRI.ArcGIS.Carto
+
+Public Class AddIntersection
+    Inherits ESRI.ArcGIS.Desktop.AddIns.Tool
+
+    Public Sub New()
+
+    End Sub
+
+    Protected Overrides Sub OnUpdate()
+
+    End Sub
+
+    Protected Overrides Sub OnMouseUp(arg As ESRI.ArcGIS.Desktop.AddIns.Tool.MouseEventArgs)
+        MyBase.OnMouseUp(arg)
+        Dim mIntersectionForm As New frmAddEditIntersection
+        mIntersectionForm.ShowDialog()
+        If mIntersectionForm.frmStatus = True Then
+            MsgBox("Test")
+        End If
+    End Sub
+End Class

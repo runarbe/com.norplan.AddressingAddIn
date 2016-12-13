@@ -1,0 +1,75 @@
+﻿<ESRI.Configuration xmlns="http://schemas.esri.com/Desktop/AddIns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>npoAddressingAddIn</Name>
+  <AddInID>{ba23d2f6-3172-454e-8358-8881303f68b2}</AddInID>
+  <Description>ArcGIS tools for creation and maintenance of street addressing data for the Muscat Addressing System</Description>
+  <Version>1.0</Version>
+  <Image>Images\npoAddressingAddIn.png</Image>
+  <Author>(Stein) Runar Bergheim, Alok Singh</Author>
+  <Company>NORPLAN Oman</Company>
+  <Date>21.10.2012</Date>
+  <Targets>
+    <Target name="Desktop" version="10.0" />
+  </Targets>
+  <AddIn language="CLR" library="npoAddressingAddIn.dll" namespace="npoAddressingAddIn">
+    <ArcMap>
+      <Commands>
+        <Button id="NORPLAN_Oman_npoAddressingAddIn_DefineStreet" class="DefineStreet" message="" caption="Define Street" tip="Define street from selected street segments" category="Addressing" image="Images\defineStreetSimple.png" />
+        <Button id="NORPLAN_Oman_npoAddressingAddIn_AddToStreet" class="AddToStreet" message="" caption="Add to Street" tip="Add selected street segments to street with ID..." category="Addressing" image="Images\addToStreet.png" />
+        <Button id="NORPLAN_Oman_npoAddressingAddIn_DeleteStreet" class="DeleteStreet" message="" caption="Delete Street" tip="Delete street with ID..." category="Addressing" image="Images\deleteStreet.png" />
+        <Button id="NORPLAN_Oman_npoAddressingAddIn_UpdateFromMCT" class="UpdateFromMCT" message="" caption="Update Street Attributes from MCT Roads" tip="Update attributes from MCT roads" category="Addressing" image="Images\UpdateFromMCT.png" />
+        <Button id="NORPLAN_Oman_npoAddressingAddIn_RemoveSegmentFromStreet" class="RemoveSegmentFromStreet" message="Remove selected segments from street" caption="Remove selected segment(s) from street" tip="" category="Addressing" image="Images\RemoveSegmentFromStreet.png" />
+        <Button id="NORPLAN_Oman_npoAddressingAddIn_TestButton" class="TestButton" message="" caption="Test Button" tip="" category="Addressing" image="Images\TestButton_1.png" />
+        <Button id="NORPLAN_Oman_npoAddressingAddIn_AboutTheAddIn" class="AboutTheAddIn" message="" caption="About" tip="About the NORPLAN Oman Addressing add-in" category="Addressing" image="Images\AboutTheAddIn.png" />
+        <Button id="NORPLAN_Oman_npoAddressingAddIn_ShowAddressUnitWindow" class="ShowAddressUnitWindow" message="" caption="Show/hide address unit window" tip="Show addressing unit window" category="Addressing " image="Images\ToggleAddressingUnitWindowVisibility.png" />
+        <Button id="NORPLAN_Oman_npoAddressingAddIn_DeleteAllAddressUnitsForSelectedStreet" class="DeleteAllAddressUnitsForSelectedStreet" message="" caption="Delete all adr units for street" tip="Delete all address units for selected street" category="Addressing" image="Images\DeleteAllAddressUnitsForSelectedStreet.png" />
+        <Button id="NORPLAN_Oman_npoAddressingAddIn_DeleteStartingPointForSelectedStreet" class="DeleteStartingPointForSelectedStreet" message="" caption="Delete starting point for selected street" tip="Delete the starting point of the selected street" category="Addressing" image="Images\DeleteStartingPointForSelectedStreet.png" />
+        <Button id="NORPLAN_Oman_npoAddressingAddIn_UpdateSelectedIntersections" class="UpdateSelectedIntersections" message="" caption="My Button" tip="" category="Addressing" image="Images\UpdateSelectedIntersections.png" />
+        <Tool id="NORPLAN_Oman_npoAddressingAddIn_EditStreet" class="EditStreet" message="" caption="Edit Street" tip="Click on street to edit attributes" category="Addressing" image="Images\editStreet.png" />
+        <Tool id="NORPLAN_Oman_npoAddressingAddIn_SelectStreet" class="SelectStreet" message="" caption="Select Street" tip="Click on street to select" category="Addressing" image="Images\selectStreets.png" />
+        <Tool id="NORPLAN_Oman_npoAddressingAddIn_FlipStreet" class="FlipStreet" message="" caption="Flip Street" tip="Flip direction of street geometry" category="Addressing" image="Images\toolFlipStreet.png" />
+        <Tool id="NORPLAN_Oman_npoAddressingAddIn_SetDirection" class="SetDirection" message="" caption="Set Direction" tip="Assign permissible driving direction for street segment" category="Addressing" image="Images\SetDirection.png" />
+        <Tool id="NORPLAN_Oman_npoAddressingAddIn_SplitStreetSegment" class="SplitStreetSegment" message="" caption="Split street segment at point" tip="Split street segment at point" category="Addressing" image="Images\SplitStreetSegment.png" />
+        <Tool id="NORPLAN_Oman_npoAddressingAddIn_TestTool" class="TestTool" message="" caption="Tool for Testing" tip="" category="Addressing" image="Images\TestTool.png" />
+        <Tool id="NORPLAN_Oman_npoAddressingAddIn_AddAdrUnitClick" class="AddAdrUnitClick" message="" caption="Add adr. unit" tip="Add addressing unit" category="Addressing" image="Images\AddAdrUnitClick.png" />
+        <Tool id="NORPLAN_Oman_npoAddressingAddIn_SetStreetForAddressing" class="SetStreetForAddressing" message="" caption="Choose street for addressing" tip="Select the street to assign addresses to." category="Addressing" image="Images\SetStreetForAddressing.png" />
+        <Tool id="NORPLAN_Oman_npoAddressingAddIn_GetStreetLength" class="GetStreetLength" message="" caption="Get street length" tip="Get the selected street length." category="Addressing" image="Images\slength.png" />
+        <Tool id="NORPLAN_Oman_npoAddressingAddIn_SetStartingPointForStreet" class="SetStartingPointForStreet" message="" caption="Set starting point for street" tip="Set the starting point of streets to be addressed" category="Addressing" image="Images\SetStartingPointForStreet.png" />
+        <Tool id="NORPLAN_Oman_npoAddressingAddIn_DeleteAddressUnit" class="DeleteAddressUnit" message="" caption="Delete address unit" tip="Click on address units to delete them" category="Addressing" image="Images\DeleteAddressUnit_1.png" />
+        <Tool id="NORPLAN_Oman_npoAddressingAddIn_AddIntersection" class="AddIntersection" message="" caption="Add intersection" tip="" category="Addressing" image="Images\AddIntersection.png" />
+      </Commands>
+      <Toolbars>
+        <Toolbar id="NORPLAN_Oman_npoAddressingAddIn_Addressing_Toolbar" caption="Addressing Toolbar" showInitially="true">
+          <Items>
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_SelectStreet" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_DefineStreet" separator="true" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_AddToStreet" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_EditStreet" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_FlipStreet" separator="true" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_SetDirection" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_SplitStreetSegment" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_RemoveSegmentFromStreet" separator="true" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_DeleteStreet" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_ShowAddressUnitWindow" separator="true" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_SetStreetForAddressing" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_GetStreetLength" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_SetStartingPointForStreet" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_AddAdrUnitClick" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_DeleteStartingPointForSelectedStreet" separator="true" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_DeleteAddressUnit" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_DeleteAllAddressUnitsForSelectedStreet" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_AboutTheAddIn" separator="true" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_TestButton" separator="true" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_TestTool" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_AddIntersection" separator="true" />
+            <Item refID="NORPLAN_Oman_npoAddressingAddIn_UpdateSelectedIntersections"/>        
+          </Items>
+        </Toolbar>
+      </Toolbars>
+      <DockableWindows>
+        <DockableWindow id="NORPLAN_Oman_npoAddressingAddIn_DockableAddressUnitWindow" class="DockableAddressUnitWindow+AddinImpl" caption="Address Unit Settings" image="Images\DockableAddressUnitWindow.png">
+          <InitialPlacement height="300" width="280" state="pinned" position="right" />
+        </DockableWindow>
+      </DockableWindows>
+    </ArcMap>
+  </AddIn>
+</ESRI.Configuration>

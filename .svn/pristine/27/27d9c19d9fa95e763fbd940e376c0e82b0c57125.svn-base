@@ -1,0 +1,26 @@
+﻿Imports npoAddressingAddIn.Utilities
+
+Module AddressingFeatures
+    Class Street
+        Inherits Utilities.Layer
+
+        Sub New()
+            MyBase.Fields.Add("id", "pk")
+            MyBase.Fields.Add("fk_area_id", "integer")
+            MyBase.Fields.Add("nameArabic", "varchar")
+            MyBase.Fields.Add("nameEnglish", "varchar")
+        End Sub
+
+    End Class
+
+    Class StreetSegment
+        Inherits Utilities.Layer
+
+        Sub New()
+            MyBase.Fields.Add("id", "")
+
+        End Sub
+
+    End Class
+
+End Module
